@@ -3,12 +3,11 @@ import org.jsoup.*;
 import org.jsoup.helper.*;
 import org.jsoup.nodes.*;
 import org.jsoup.select.*;
+import java.io.IOException;
 public class TestMain {
-	public static void main(String[] args) {
+	public static void main(String[] args) throws java.io.IOException {
 		// TODO Auto-generated method stub
-		
-		        Validate.isTrue(args.length == 1, "usage: supply url to fetch");
-		        String url = args[0];
+		        String url = "http://www.sciencemag.org/news/2017/03/quantum-computer-learns-see-trees";
 		        print("Fetching %s...", url);
 
 		        Document doc = Jsoup.connect(url).get();
@@ -16,25 +15,28 @@ public class TestMain {
 		        Elements media = doc.select("[src]");
 		        Elements imports = doc.select("link[href]");
 
-		        print("\nMedia: (%d)", media.size());
-		        for (Element src : media) {
-		            if (src.tagName().equals("img"))
-		                print(" * %s: <%s> %sx%s (%s)",
-		                        src.tagName(), src.attr("abs:src"), src.attr("width"), src.attr("height"),
-		                        trim(src.attr("alt"), 20));
-		            else
-		                print(" * %s: <%s>", src.tagName(), src.attr("abs:src"));
-		        }
-
-		        print("\nImports: (%d)", imports.size());
-		        for (Element link : imports) {
-		            print(" * %s <%s> (%s)", link.tagName(),link.attr("abs:href"), link.attr("rel"));
-		        }
+//		        print("\nMedia: (%d)", media.size());
+//		        for (Element src : media) {
+//		            if (src.tagName().equals("img"))
+//		                print(" * %s: <%s> %sx%s (%s)",
+//		                        src.tagName(), src.attr("abs:src"), src.attr("width"), src.attr("height"),
+//		                        trim(src.attr("alt"), 20));
+//		            else
+//		                print(" * %s: <%s>", src.tagName(), src.attr("abs:src"));
+//		        }
+//
+//		        print("\nImports: (%d)", imports.size());
+//		        for (Element link : imports) {
+//		            print(" * %s <%s> (%s)", link.tagName(),link.attr("abs:href"), link.attr("rel"));
+//		        }
 
 		        print("\nLinks: (%d)", links.size());
 		        for (Element link : links) {
-		            print(" * a: <%s>  (%s)", link.attr("abs:href"), trim(link.text(), 35));
+		            print(" %s", link.attr("abs:href"));
 		        }
+		        
+		        System.out.println(doc.select("h0, h1, h2, h3, h4, h5, h6").text());
+		        System.out.println(doc.title());doc.title();
 		    }
 
 		    private static void print(String msg, Object... args) {
@@ -47,8 +49,5 @@ public class TestMain {
 		        else
 		            return s;
 		    }
-		}
-		
-	}
 
 }
