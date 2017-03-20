@@ -7,7 +7,7 @@ import java.io.IOException;
 public class TestMain {
 	public static void main(String[] args) throws java.io.IOException {
 		// TODO Auto-generated method stub
-		        String url = "http://www.sciencemag.org/news/2017/03/quantum-computer-learns-see-trees";
+		        String url = "https://en.wikipedia.org/wiki/Athletics_at_the_Summer_Olympics";
 		        print("Fetching %s...", url);
 
 		        Document doc = Jsoup.connect(url).get();
@@ -37,6 +37,7 @@ public class TestMain {
 		        
 		        System.out.println(doc.select("h0, h1, h2, h3, h4, h5, h6").text());
 		        System.out.println(doc.title());doc.title();
+		        System.out.println(doc.body().text());
 		    }
 
 		    private static void print(String msg, Object... args) {
