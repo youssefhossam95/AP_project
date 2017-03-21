@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -44,9 +45,8 @@ public class Crawler implements Runnable {
 				e.printStackTrace();
 				return;
 			}
-			System.out.println(Thread.currentThread().getId()+" outside");
 			try {
-				currentURL=java.net.URLDecoder.decode(currentURL,"UTF-8"); //
+				currentURL=java.net.URLDecoder.decode(currentURL,"UTF-8"); //hawlo mn el URL encoding el utf-8
 			} catch (UnsupportedEncodingException e1) {
 				e1.printStackTrace();
 			}
@@ -54,44 +54,43 @@ public class Crawler implements Runnable {
 			if(index!=-1)
 				currentURL=currentURL.substring(0, index);
 			Document doc = null;
-			try {
-				doc = Jsoup.connect(currentURL).get();
-			} catch (Exception e) {
-				e.printStackTrace();
-				continue;
-			}
-			if(doc==null)
-				continue;
-			if(Dbman.tryInsertPage(currentURL) && robot.isAllowed(currentURL)) //if current page not already fetched and fetching is allowed.
+			try
 			{	
-				pagesCount.incrementAndGet();
-				System.out.println(pagesCount);
-				System.out.println(Thread.currentThread().getId()+" inside");
-			    Elements links = doc.select("a[href]");
-			    String text=doc.body().text();
-			    String [] neighbourLinks=new String[links.size()];
-			    for(int i=0;i<links.size();i++)
-			    {
-			    	neighbourLinks[i]=links.get(i).attr("abs:href");
-			    }
-			    String headers=doc.select("h0, h1, h2, h3, h4, h5, h6").text();
-			    String title= doc.title();
-				Dbman.updatePage(text,title,headers,currentURL);
-				//now page table updated with the new link.
-				
-				for(String link :neighbourLinks) //add all neighbour links to pointsto table and push them in the queue.
-				{
-					
-					Dbman.insertPointsTo(currentURL, link);
+				if(Dbman.tryInsertPage(currentURL) && robot.isAllowed(currentURL)) //if current page not already fetched and fetching is allowed.
+				{	
 					try {
-						linksQ.put(link);
-					} catch (InterruptedException e) {
+						doc = Jsoup.connect(currentURL).get();
+					} catch (Exception e) {
 						e.printStackTrace();
-						System.out.println(currentURL+"\n"+link);
+						continue;
+					}
+					if(doc==null) //problem in fetching page.
+						continue;
+					pagesCount.incrementAndGet();
+					System.out.println("Thread "+Thread.currentThread().getName()+" is crawling...");
+				    Elements links = doc.select("a[href]");
+				    String text=doc.body().text();
+				    String [] neighbourLinks=new String[links.size()];
+				    for(int i=0;i<links.size();i++)
+				    {
+				    	neighbourLinks[i]=links.get(i).attr("abs:href");
+				    }
+				    String headers=doc.select("h0, h1, h2, h3, h4, h5, h6").text();
+				    String title= doc.title();
+					Dbman.updatePage(text,title,headers,currentURL);
+					for(String link :neighbourLinks) //add all neighbour links to pointsto table and push them in the queue.
+					{
+						
+						Dbman.insertPointsTo(currentURL, link);
+						try {
+							linksQ.put(link);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+							System.out.println(currentURL+"\n"+link);
+						}
 					}
 				}
-				
-			}
+			}catch(Exception e){e.printStackTrace();}
 			
 		}
 	}

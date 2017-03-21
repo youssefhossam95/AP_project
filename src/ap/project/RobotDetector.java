@@ -115,5 +115,39 @@ public class RobotDetector {
 		
 	}
 	
-
+public boolean test(String fileText,URL link)
+{
+	if(fileText==null)
+		return true;
+	if(fileText.length()==0) //empty-> allowed
+		return true;
+	fileText=fileText.toLowerCase();
+	fileText=fileText.replaceAll(" ","");
+	int startPos=fileText.indexOf("user-agent:*");
+	if(startPos==-1)
+		return true;
+	fileText=fileText.substring(startPos); // 14 is length of user-agent word.
+	String[] split = fileText.split("\n");	
+	for(int i=1;i<split.length;i++)
+	{
+		if(split[i].startsWith("user-agent"))//reached another user agent.
+			break;
+		if(!split[i].startsWith("disallow")) //not a disallow statement.
+			continue;
+		int starti=split[i].indexOf(":")+1;
+		String path = link.getPath();
+		split[i]=split[i].substring(starti);
+		if(split[i]=="") //nothing disallowed.
+			return true;
+        if (split[i].equals("/")) 
+        	return false;       //allows nothing
+        if (split[i].length() <= path.length())
+        { 
+            String pathCompare = path.substring(0, split[i].length());
+            if (pathCompare.equals(split[i])) return false;
+        }
+        
+    }
+	return true;
+}
 }

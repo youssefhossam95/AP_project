@@ -1,4 +1,5 @@
 package ap.project;
+import java.io.ByteArrayInputStream;
 import java.sql.*;
 import com.microsoft.sqlserver.jdbc.SQLServerDataSource;
 import com.microsoft.sqlserver.jdbc.SQLServerException;
@@ -117,6 +118,34 @@ public class DBmanager {
 			return false;
 		}
 		return true;
+	}
+	synchronized public void InsertPage(String url,String text,String title,String header) throws SQLException
+	{
+		CallableStatement stmt = null;
+			stmt = con.prepareCall("{call insertPage(?,?,?,?)}");
+			stmt.setString(1, url);
+			stmt.setString(2, text);
+			stmt.setString(3, title);
+			stmt.setString(4, header);
+			stmt.execute();
+	}
+	synchronized public boolean isPageExists(String url)
+	{
+		CallableStatement stmt = null;
+		try {
+			stmt = con.prepareCall("{call findPage(?,?)}");
+			stmt.setString(1, url);
+			stmt.registerOutParameter("title", Types.VARCHAR);
+			stmt.execute();
+			if(stmt.getObject(2) ==null)
+				return false;
+			else
+				return true;
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return true;
+		}
 	}
 }
 

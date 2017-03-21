@@ -29,7 +29,6 @@ public class CrawlerMain {
 		{
 			System.out.println(e.getMessage());
 		}
-		System.out.println("Crawling Started!");
 		//ronaldo,machine learning ,rihanna,bbc
 		String[] initialLinks={
 				"https://en.wikipedia.org/wiki/Machine_learning"
@@ -42,6 +41,7 @@ public class CrawlerMain {
 		
 		if(choice==1)//start from scratch
 		{
+			System.out.println("Clearing existing database...");
 			DBman.executeUpdate("Delete from PointsTo"); //clear database.
 			DBman.executeUpdate("Delete from Page");
 		}
@@ -83,18 +83,26 @@ public class CrawlerMain {
 			}
 		}
 		
-		
+		System.out.println("Crawling Started!");
 		Thread[] threads=new Thread[threadsCount];
 		AtomicInteger pagesCount=new AtomicInteger();
-		
+		Integer counter=0;
 		for(Thread t : threads)
 		{
-			t=new Thread(new Crawler(links,DBman,pagesCount,pagesThreshold));
+			counter++;
+			t=new Thread(new Crawler(links,DBman,pagesCount,pagesThreshold),counter.toString());
 			t.start();
 		}
-		
-		while(pagesCount.get()<=pagesThreshold); //wait for stopping condition.
-		
+		int last=0;
+		while(pagesCount.get()<=pagesThreshold) //wait for stopping condition.
+		{
+			int count=pagesCount.get();
+			if(count%5==0 && last!=count )
+			{
+				System.out.println(pagesCount.get()+" pages scrapped");
+				last=count;
+			}
+		}
 		try {
 			Thread.sleep(2000);
 		} catch (InterruptedException e) {
