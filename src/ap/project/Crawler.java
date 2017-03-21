@@ -14,7 +14,7 @@ import org.jsoup.select.*;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 public class Crawler implements Runnable {
-	
+	//hello
 	LinkedBlockingQueue<String> linksQ;
 	RobotDetector robot;
 	DBmanager Dbman;
