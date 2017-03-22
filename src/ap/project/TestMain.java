@@ -11,9 +11,9 @@ import java.util.Scanner;
 public class TestMain {
 	public static void main(String[] args) throws java.io.IOException {
 		// TODO Auto-generated method stub
-		        String url = "https://en.wikipedia.org/wiki/Athletics_at_the_Summer_Olympics";
+		        String url = "http://www.asic-world.com/verilog/verilog_one_day2.html";
 		        print("Fetching %s...", url);
-//		        Document doc = Jsoup.connect(url).get();
+		        Document doc = Jsoup.connect(url).get();
 //		        Elements links = doc.select("a[href]");
 //		        Elements media = doc.select("[src]");
 //		        Elements imports = doc.select("link[href]");
@@ -22,9 +22,9 @@ public class TestMain {
 //		        boolean result=rb.test(rb.wikiBot, new URL("https://en.wikipedia.org/api/rest_v1/?doc"));
 //		        System.out.println(result);
 		        DBmanager dbman=new DBmanager();
-		        System.out.println(dbman.isOldPage( "https://en.wikipedia.org/wiki/Rihanna"));
+		        System.out.println(dbman.isOldPage( "https://en.wikipea.org/wiki/Rihanna"));
 		        
-		        
+		        //System.out.println(dbman.isNewsPage("http://edition.cnn.com/2017/03/22/politics/house-health-care-bill/index.html"));		        
 		        
 
 //		        print("\nMedia: (%d)", media.size());
@@ -48,6 +48,7 @@ public class TestMain {
 //		        }
 //		        
 //		        System.out.println(doc.select("h0, h1, h2, h3, h4, h5, h6").text());
+		        
 //		        System.out.println(doc.title());doc.title();
 //		        System.out.println(doc.body().text());
 		    }

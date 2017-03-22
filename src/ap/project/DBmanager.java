@@ -1,6 +1,13 @@
 package ap.project;
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.sql.*;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+
 import com.microsoft.sqlserver.jdbc.SQLServerDataSource;
 import com.microsoft.sqlserver.jdbc.SQLServerException;
 public class DBmanager {
@@ -151,14 +158,17 @@ public class DBmanager {
 	{
 		CallableStatement stmt = null;
 		try {
-			stmt = con.prepareCall("{call isOldPage(?,?)}");
+			stmt = con.prepareCall("{call getPageAge(?,?)}");
 			stmt.setString(1, url);
 			stmt.registerOutParameter("result", Types.INTEGER);
 			stmt.execute();
-			if(stmt.getInt(2)==0)
-				return false;
-			else
+			if(stmt.getInt(2)==-1) //-1 means more than a day.->old page
 				return true;
+			if(stmt.getInt(2)<2) //less than 2 hours->new
+				return false;
+			if(isNewsPage(url))//more than 2 hours and news->OLD	
+				return true;
+			return false; //More than 2 hours but not news.
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -166,8 +176,36 @@ public class DBmanager {
 		}
 	}
 
-	public boolean isNewsPage(String currentURL) {
-		return false;
+	public boolean isNewsPage(String url) {
+		Document doc;
+		URL link = null;
+		try {
+			link = new URL(url);
+		} catch (MalformedURLException e1) {
+			e1.printStackTrace();
+			return false;
+		}
+		String homeURL="http://"+link.getHost();
+		try {
+			doc = Jsoup.connect(homeURL).get();
+		} catch (IOException e) {
+			
+			e.printStackTrace();
+			return false;
+		}
+		try{
+			
+		String description = doc.select("meta[name=description]").get(0) .attr("content");  
+        description=description.toLowerCase();
+        
+        if(description.contains("news"))
+        	return true;
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+        return false;
 	}
 }
 
