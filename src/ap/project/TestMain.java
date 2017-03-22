@@ -18,9 +18,11 @@ public class TestMain {
 //		        Elements media = doc.select("[src]");
 //		        Elements imports = doc.select("link[href]");
 		        RobotDetector rb=new RobotDetector();
-		        System.out.println(rb.wikiBot);
-		        boolean result=rb.test(rb.wikiBot, new URL("https://en.wikipedia.org/api/rest_v1/?doc"));
-		        System.out.println(result);
+//		        System.out.println(rb.wikiBot);
+//		        boolean result=rb.test(rb.wikiBot, new URL("https://en.wikipedia.org/api/rest_v1/?doc"));
+//		        System.out.println(result);
+		        DBmanager dbman=new DBmanager();
+		        System.out.println(dbman.isOldPage( "https://en.wikipedia.org/wiki/Rihanna"));
 		        
 		        
 		        

@@ -151,7 +151,7 @@ public class DBmanager {
 	{
 		CallableStatement stmt = null;
 		try {
-			stmt = con.prepareCall("{call isPageOld(?,?)}");
+			stmt = con.prepareCall("{call isOldPage(?,?)}");
 			stmt.setString(1, url);
 			stmt.registerOutParameter("result", Types.INTEGER);
 			stmt.execute();
