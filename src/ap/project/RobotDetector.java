@@ -1,6 +1,7 @@
 package ap.project;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -8,32 +9,21 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class RobotDetector {
 	
 	String wikiBot;
 	RobotDetector() throws IOException
 	{
-		URL website = null;
-		try {
-			website = new URL("https://en.wikipedia.org/robots.txt");
-		} catch (MalformedURLException e) {
-			
-			e.printStackTrace();
+		File wiki=new File("wikiRobot.txt");
+		Scanner s=new Scanner(wiki);
+		StringBuilder sb=new StringBuilder();
+		while(s.hasNext())
+		{
+			sb.append(s.nextLine()+"\n");
 		}
-        URLConnection connection = website.openConnection();
-        BufferedReader in = new BufferedReader(
-                                new InputStreamReader(
-                                    connection.getInputStream()));
-
-        StringBuilder response = new StringBuilder();
-        String inputLine;
-
-        while ((inputLine = in.readLine()) != null) 
-            response.append(inputLine);
-
-        in.close();
-        wikiBot=response.toString();
+		wikiBot=sb.toString();
 	}
 
 	public String getText(String link) {

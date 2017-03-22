@@ -18,16 +18,8 @@ public class TestMain {
 //		        Elements media = doc.select("[src]");
 //		        Elements imports = doc.select("link[href]");
 		        RobotDetector rb=new RobotDetector();
-		        File f=new File("test.txt");
-		        Scanner s=new Scanner(f);
-		        StringBuffer sb=new StringBuffer();
-		        while(s.hasNextLine())
-		        {
-		        	sb.append(s.nextLine());
-		        	sb.append('\n');
-		        }
-		        String text=sb.toString();
-		        boolean result=rb.test(text, new URL("https://en.wikipedia.org/api/"));
+		        System.out.println(rb.wikiBot);
+		        boolean result=rb.test(rb.wikiBot, new URL("https://en.wikipedia.org/api/"));
 		        System.out.println(result);
 		        
 		        

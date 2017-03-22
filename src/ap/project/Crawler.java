@@ -56,7 +56,7 @@ public class Crawler implements Runnable {
 			Document doc = null;
 			try
 			{	
-				if(Dbman.tryInsertPage(currentURL) && robot.isAllowed(currentURL)) //if current page not already fetched and fetching is allowed.
+				if((Dbman.tryInsertPage(currentURL) || (Dbman.isOldPage(currentURL) && Dbman.isNewsPage(currentURL))) && robot.isAllowed(currentURL)) //to fetch page it must be either an old news page or a non existing page.robot allow is a must.
 				{	
 					try {
 						doc = Jsoup.connect(currentURL).get();

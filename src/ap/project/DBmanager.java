@@ -147,5 +147,27 @@ public class DBmanager {
 			return true;
 		}
 	}
+	synchronized public boolean isOldPage(String url)
+	{
+		CallableStatement stmt = null;
+		try {
+			stmt = con.prepareCall("{call isPageOld(?,?)}");
+			stmt.setString(1, url);
+			stmt.registerOutParameter("result", Types.INTEGER);
+			stmt.execute();
+			if(stmt.getInt(2)==0)
+				return false;
+			else
+				return true;
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	public boolean isNewsPage(String currentURL) {
+		return false;
+	}
 }
 
