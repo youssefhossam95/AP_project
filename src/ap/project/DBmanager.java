@@ -162,13 +162,13 @@ public class DBmanager {
 			stmt.setString(1, url);
 			stmt.registerOutParameter("result", Types.INTEGER);
 			stmt.execute();
-			if(stmt.getInt(2)==-1) //-1 means more than a day.->old page
+			if(stmt.getInt(2)>12) //more than 12 hours->old page
 				return true;
 			if(stmt.getInt(2)<2) //less than 2 hours->new
 				return false;
 			if(isNewsPage(url))//more than 2 hours and news->OLD	
 				return true;
-			return false; //More than 2 hours but not news.
+			return false; //between 2 and 12 hours but not news.
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
