@@ -83,12 +83,21 @@ public class RobotDetector {
 		String[] split = fileText.split("\n");		
 		for(int i=1;i<split.length;i++)
 		{
+			if(split[i].startsWith("allow"))
+			{
+				int starti=split[i].indexOf(":")+1;
+				String path = link.getFile();
+				split[i]=split[i].substring(starti);
+				if(split[i].equals(path))
+					return true;
+				continue;
+			}
 			if(!split[i].startsWith("disallow")) //not a disallow statement.
 				continue;
 			if(split[i].startsWith("user-agent"))//reached another user agent.
 				break;
 			int starti=split[i].indexOf(":")+1;
-			String path = link.getPath();
+			String path = link.getFile();
 			split[i]=split[i].substring(starti);
 			if(split[i]=="") //nothing disallowed.
 				return true;
@@ -120,12 +129,21 @@ public boolean test(String fileText,URL link)
 	String[] split = fileText.split("\n");	
 	for(int i=1;i<split.length;i++)
 	{
+		if(split[i].startsWith("allow"))
+		{
+			int starti=split[i].indexOf(":")+1;
+			String path = link.getFile();
+			split[i]=split[i].substring(starti);
+			if(split[i].equals(path))
+				return true;
+			continue;
+		}
 		if(split[i].startsWith("user-agent"))//reached another user agent.
 			break;
 		if(!split[i].startsWith("disallow")) //not a disallow statement.
 			continue;
 		int starti=split[i].indexOf(":")+1;
-		String path = link.getPath();
+		String path =link.getFile();
 		split[i]=split[i].substring(starti);
 		if(split[i]=="") //nothing disallowed.
 			return true;

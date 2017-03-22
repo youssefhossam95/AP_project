@@ -19,7 +19,7 @@ public class TestMain {
 //		        Elements imports = doc.select("link[href]");
 		        RobotDetector rb=new RobotDetector();
 		        System.out.println(rb.wikiBot);
-		        boolean result=rb.test(rb.wikiBot, new URL("https://en.wikipedia.org/api/"));
+		        boolean result=rb.test(rb.wikiBot, new URL("https://en.wikipedia.org/api/rest_v1/?doc"));
 		        System.out.println(result);
 		        
 		        
