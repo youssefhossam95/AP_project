@@ -5,6 +5,7 @@ import java.sql.*;
 import java.io.* ; 
 import com.microsoft.sqlserver.jdbc.*;
 
+import ap.project.Stemmer;
 public class Indexer {
 	
 public static void WriteToFile (String fileName , String text ){
@@ -107,7 +108,7 @@ public static void WriteToFile (String fileName , String text ){
 	}
 	
 	
-	public static void InsertContains (Statement st ,String Word ,String URL, String Priority)
+	public static void InsertContains (Statement st ,String Word ,String URL, String Priority ,String Index)
 	{
 		
 		String query = "SELECT * FROM Word WHERE Text ='" + Word +"'" ; 
@@ -120,7 +121,7 @@ public static void WriteToFile (String fileName , String text ){
 					
 					
 				query = "INSERT INTO UContains VALUES ( '" +
-					URL+ "'," + ID+ ","+ Priority+ ")" ; 
+					URL+ "'," + ID+ ","+ Priority+ ","+ Index + ")" ; 
 				System.out.println(query);
 		     st.executeUpdate(query);
 					
@@ -141,13 +142,14 @@ public static void WriteToFile (String fileName , String text ){
 			return ; 	
 		String [] words = Text.split(" "); 
 	    Stemmer s = new Stemmer();
-
+	    int Index =  1 ; 
 		for (int i = 0 ; i < words.length ; i ++)
 			{
 				String str = s.GetStemedString(words[i]); 
 				
 				InsertWords(st, str, MaxID);
-				InsertContains(st,str, URL , Priority);
+				InsertContains(st,str, URL , Priority,String.valueOf(Index));
+				Index += 1 ; // index of the word in the paragraph 
 			}
 		
 	}
