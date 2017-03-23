@@ -10,7 +10,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 public class CrawlerMain {
 
-	public static void main(String[] args) {
+public static void main(String[] args) {
 		
 		int pagesThreshold; //stopping condition.
 		System.out.println("Enter the number of threads you'd like to use: ");
