@@ -385,7 +385,10 @@ public class Stemmer
    
    public static String GetStemedString (String input )
    {
-	   	input = input.split("['?:!]")[0];
+	   	String [] parts  = input.split("['?:!,.]");
+	   	if (parts.length == 0 )
+	   		return null ; 
+	   	input= parts[0]; 
 	   	input = input.toLowerCase(); 
 	   	char[] w = new char[501];
 	      Stemmer s = new Stemmer();
@@ -402,20 +405,34 @@ public class Stemmer
 		      return output ; 
 		    
    }
+ public static int GetDelay (String Text){
+	   
+	   String[] words = Text.split(" "); 
+	   for (int i = 0 ; i < words.length ; i++)
+	   {
+		   words[i] = words[i].toLowerCase(); 
+		   if (words[i].equals("crawl-delay:"))
+			   return Integer.parseInt(words[i+1]); 
+		   
+	   }
+	   return 0 ; 
+   }
    public static void main(String[] args)
    {
-      char[] w = new char[501];
-      Stemmer s = new Stemmer();
-     
-      String str = "hello"; 
-      Scanner scanner = new Scanner (System.in);
-
-      while (str != "bye")
-      {
-    	  str = scanner.nextLine(); 
+	   char[] w = new char[501];
+	      Stemmer s = new Stemmer();
+	     
+	      String str = "hello  delay Crawl-DelAy: 10"; 
+	      Scanner scanner = new Scanner (System.in);
+	    // int x = s.GetDelay(str)+1;
+	    //  System.out.println ("the output is: "+x ); 
 	      
-	      System.out.println ("the output is: "+ s.GetStemedString(str)); 
-      }
+	      while(true){
+	    	  str = scanner.nextLine(); 
+	    	 
+	    	  
+	    	  System.out.println ("the output is: "+  s.GetStemedString(str)); 
+	      }
 //      for (int i = 0; i < args.length; i++)
 //      try
 //      {
