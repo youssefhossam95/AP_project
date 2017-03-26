@@ -122,6 +122,15 @@ public class DBmanager {
 			
 			if(e.getErrorCode()!=2627) //duplicate key error.
 				e.printStackTrace();
+			
+			//increment rank by one.
+			try {
+				stmt=con.prepareCall("{call IncrementRank(?)}");
+				stmt.setString(1, url);
+				stmt.execute();
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
 			return false;
 		}
 		return true;
