@@ -22,7 +22,7 @@ public class TestMain {
 //		        boolean result=rb.test(rb.wikiBot, new URL("https://en.wikipedia.org/api/rest_v1/?doc"));
 //		        System.out.println(result);
 		        DBmanager dbman=new DBmanager();
-		        System.out.println(dbman.isOldPage( "https://en.wikipea.org/wiki/Rihanna"));
+		        System.out.println(dbman.isOldPage( "https://en.wikipedia.org/wiki/Rihanna"));
 		        
 		        //System.out.println(dbman.isNewsPage("http://edition.cnn.com/2017/03/22/politics/house-health-care-bill/index.html"));		        
 		        

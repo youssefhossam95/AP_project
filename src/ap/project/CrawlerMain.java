@@ -1,6 +1,7 @@
 package ap.project;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -47,30 +48,42 @@ public static void main(String[] args) {
 		}
 		else
 		{
+			//getting the last fetched 10 pages.
 			String URL=null;
-			ResultSet rs=DBman.executeQuery("SELECT TOP 1 * FROM page ORDER BY LastFetched DESC");
+			ResultSet rs=DBman.executeQuery("SELECT TOP 10 * FROM page ORDER BY LastFetched DESC;");
+			ArrayList<String> URLs=new ArrayList<String>();
+			ArrayList<String>neighbourLinks=new ArrayList<String>();
 			try {
-				 if(rs.next())
-					 URL=rs.getString("URL");
+				 while(rs.next())
+					 URLs.add(rs.getString("URL"));
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
-
+			Elements docLinks=null;
 			Document doc = null;
-			try {
-				doc = Jsoup.connect(URL).get();
-			} catch (Exception e) {
-				e.printStackTrace();
+			for(int j=0;j<URLs.size();j++) //for every page get its neighbour links and add them to the list.
+			{
+				try {
+					
+					doc = Jsoup.connect(URLs.get(j)).get();
+					docLinks = doc.select("a[href]");
+				} catch (Exception e) {
+					e.printStackTrace();
+					continue; //problem with the current link->go to next
+				}
 				
+		        for(int i=0;i<docLinks.size();i++)
+		        {
+		        	neighbourLinks.add(docLinks.get(i).attr("abs:href"));
+		        }
 			}
-			Elements docLinks = doc.select("a[href]");
-	        String [] neighbourLinks=new String[docLinks.size()];
-	        for(int i=0;i<docLinks.size();i++)
-	        {
-	        	neighbourLinks[i]=docLinks.get(i).attr("abs:href");
-	        }
-	        
-	        initialLinks=neighbourLinks; //start crawling from neighbour links.
+	        initialLinks=new String[neighbourLinks.size()];
+	        int i=0;
+			for(String link: neighbourLinks)
+			{
+				initialLinks[i]=link;
+				i++;
+			}
 		}
 		
 		for(String link : initialLinks) 

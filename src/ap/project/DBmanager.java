@@ -162,6 +162,9 @@ public class DBmanager {
 			stmt.setString(1, url);
 			stmt.registerOutParameter("result", Types.INTEGER);
 			stmt.execute();
+			int x=stmt.getInt(2);
+			if(stmt.getInt(2)==-1)//different day 
+				return true;
 			if(stmt.getInt(2)>12) //more than 12 hours->old page
 				return true;
 			if(stmt.getInt(2)<2) //less than 2 hours->new
