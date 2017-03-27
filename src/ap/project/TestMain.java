@@ -1,13 +1,9 @@
 package ap.project;
-import org.jsoup.*;
-import org.jsoup.helper.*;
-import org.jsoup.nodes.*;
-import org.jsoup.select.*;
-
-import java.io.File;
-import java.io.IOException;
 import java.net.URL;
-import java.util.Scanner;
+import java.util.concurrent.ConcurrentHashMap;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 public class TestMain {
 	public static void main(String[] args) throws java.io.IOException {
 		// TODO Auto-generated method stub
@@ -17,12 +13,10 @@ public class TestMain {
 //		        Elements links = doc.select("a[href]");
 //		        Elements media = doc.select("[src]");
 //		        Elements imports = doc.select("link[href]");
-		        RobotDetector rb=new RobotDetector();
+		        RobotDetector rb=new RobotDetector(new ConcurrentHashMap<String,TimeCapsule>());
 //		        System.out.println(rb.wikiBot);
-//		        boolean result=rb.test(rb.wikiBot, new URL("https://en.wikipedia.org/api/rest_v1/?doc"));
-//		        System.out.println(result);
-		        DBmanager dbman=new DBmanager();
-		        System.out.println(dbman.isOldPage( "https://en.wikipedia.org/wiki/Rihanna"));
+		        //boolean result=rb.test(rb.wikiBot, new URL("https://en.wikipedia.org/ai/rest_v1/?dc"));
+		        //System.out.println(result);
 		        
 		        //System.out.println(dbman.isNewsPage("http://edition.cnn.com/2017/03/22/politics/house-health-care-bill/index.html"));		        
 		        

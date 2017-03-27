@@ -3,6 +3,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -30,6 +31,7 @@ public static void main(String[] args) {
 		{
 			System.out.println(e.getMessage());
 		}
+		
 		//ronaldo,machine learning ,rihanna,bbc
 		String[] initialLinks={
 				"https://en.wikipedia.org/wiki/Machine_learning"
@@ -100,10 +102,11 @@ public static void main(String[] args) {
 		Thread[] threads=new Thread[threadsCount];
 		AtomicInteger pagesCount=new AtomicInteger();
 		Integer counter=0;
+		ConcurrentHashMap<String,TimeCapsule> blockedMap=new ConcurrentHashMap<String,TimeCapsule>();
 		for(Thread t : threads)
 		{
 			counter++;
-			t=new Thread(new Crawler(links,DBman,pagesCount,pagesThreshold),counter.toString());
+			t=new Thread(new Crawler(links,DBman,pagesCount,pagesThreshold,blockedMap),counter.toString());
 			t.start();
 		}
 		int last=0;

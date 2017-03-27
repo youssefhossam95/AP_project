@@ -6,6 +6,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.jsoup.Jsoup;
@@ -20,14 +21,14 @@ public class Crawler implements Runnable {
 	DBmanager Dbman;
 	AtomicInteger pagesCount;
 	int pagesThreshold;
-	Crawler(LinkedBlockingQueue<String> Q,DBmanager man,AtomicInteger count,int l)
+	Crawler(LinkedBlockingQueue<String> Q,DBmanager man,AtomicInteger count,int l,ConcurrentHashMap<String,TimeCapsule>map)
 	{
 		this.linksQ=Q;
 		Dbman=man;
 		pagesCount=count;
 		pagesThreshold=l;
 		try {
-			robot=new RobotDetector();
+			robot=new RobotDetector(map);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -80,15 +81,12 @@ public class Crawler implements Runnable {
 				    String headers=doc.select("h0, h1, h2, h3, h4, h5, h6").text();
 				    String title= doc.title();
 					Dbman.updatePage(text,title,headers,currentURL);
-					for(String link :neighbourLinks) //add all neighbour links to pointsto table and push them in the queue.
+					for(String link :neighbourLinks) // push neighbour links  in the queue.
 					{
-						
-						Dbman.insertPointsTo(currentURL, link);
 						try {
 							linksQ.put(link);
 						} catch (InterruptedException e) {
 							e.printStackTrace();
-							System.out.println(currentURL+"\n"+link);
 						}
 					}
 				}
