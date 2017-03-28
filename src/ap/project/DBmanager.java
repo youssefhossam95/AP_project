@@ -10,6 +10,8 @@ import org.jsoup.nodes.Document;
 
 import com.microsoft.sqlserver.jdbc.SQLServerDataSource;
 import com.microsoft.sqlserver.jdbc.SQLServerException;
+
+import javafx.animation.KeyValue.Type;
 public class DBmanager {
 
 	private Connection con;
@@ -25,6 +27,62 @@ public class DBmanager {
 			
 			e.printStackTrace();
 		}
+	}
+	
+	synchronized public ResultSet GetWordID (String Word){
+		ResultSet out =null; 
+		try {
+		CallableStatement stmt = null;
+		stmt = con.prepareCall("{call GetWord (?)}");
+		
+		stmt.setString(1, Word);
+		//stmt.registerOutParameter("ID",java.sql.Types.INTEGER);
+		out = stmt.executeQuery(); 
+		
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return out ; 
+	}
+	
+	synchronized public void InsertWord (int ID , String Word){ 
+		try {
+		CallableStatement stmt = null;
+		stmt = con.prepareCall("{call InsertWord (? , ?)}");
+		
+		stmt.setInt(1, ID);
+		stmt.setString(2, Word);
+
+		//stmt.registerOutParameter("ID",java.sql.Types.INTEGER);
+		stmt.execute(); 
+		
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
+	synchronized public void InsertUContains (String URL , int ID , int Priority , int Index ){ 
+		try {
+		CallableStatement stmt = null;
+		stmt = con.prepareCall("{call InsertUContains (? , ? , ? , ?)}");
+		
+		stmt.setString(1,URL );
+		stmt.setInt(2,ID);
+		stmt.setInt(3, Priority);
+		stmt.setInt(4, Index);
+
+		//stmt.registerOutParameter("ID",java.sql.Types.INTEGER);
+		stmt.execute(); 
+		
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 	
 	synchronized public boolean executeUpdate(String stat) //returns false if update failed.

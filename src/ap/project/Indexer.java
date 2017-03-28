@@ -117,9 +117,9 @@ public class Indexer implements Runnable  {
 	
 	synchronized public void InsertWords (String Word )
 	{
-		String query = "SELECT * FROM Word WHERE Text ='" + Word +"'" ; 
+		//String query = "SELECT * FROM Word WHERE Text ='" + Word +"'" ; 
 
-		ResultSet Rs = DB.executeQuery(query);
+		ResultSet Rs = DB.GetWordID(Word);
 		try {
 			if (! Rs.next())
 				{
@@ -127,10 +127,9 @@ public class Indexer implements Runnable  {
 						 GetMaxID(); 
 					
 					MaxID = MaxID + 1 ; 
-					query = "INSERT INTO Word VALUES ( " +String.valueOf(MaxID) +
-							",'" +Word+ "')" ; 
+					
 
-			    	DB.executeUpdate(query);
+			    	DB.InsertWord(MaxID, Word);
 			    	System.out.println("inserted the Word: " + Word );
 					
 				}
@@ -144,41 +143,39 @@ public class Indexer implements Runnable  {
 	}
 	
 	
-	public void InsertContains (String Word ,String URL, String Priority ,String Index)
+	public void InsertContains (String Word ,String URL, int Priority ,int Index)
 	{
 		
-		String query = "SELECT * FROM Word WHERE Text ='" + Word +"'" ; 
 
 		try {
-				ResultSet rs = DB.executeQuery(query);
+				ResultSet rs = DB.GetWordID(Word);
 				rs.next() ;
 				String ID = rs.getString("ID") ;
 					
-					
-					
-				query = "INSERT INTO UContains VALUES ( '" +
-					URL+ "'," + ID+ ","+ Priority+ ","+ Index + ")" ; 
-				System.out.print(Thread.currentThread().getName());
+		
+				//System.out.print(Thread.currentThread().getName());
 				//System.out.println(query);
-				System.out.println(UContainsCount++);
-		     DB.executeUpdate(query);
+				UContainsCount ++ ; 
+				if (UContainsCount % 1000 == 0)
+					System.out.println(UContainsCount);
+		     DB.InsertUContains(URL, Integer.parseInt(ID), Priority, Index);
 					
 				
 
 		} catch (SQLException e) {
 			System.out.println("Problem in INsert contains for the query : ");
 
-			System.out.println(query);
+		//	System.out.println(query);
 
 			e.printStackTrace();
 		}
 		
 	}
-	public  void HandleText ( String Text, String URL, String Priority)
+	public  void HandleText ( String Text, String URL, int Priority)
 	{
 		if (Text == null)
 			return ; 	
-		String [] words = Text.split(" "); 
+	    String[]words = Text.split("[ ?!@{}()/<>;,._=*&^%$#@+]"); 
 	    Stemmer s = new Stemmer();
 	    int Index =  1 ; 
 		for (int i = 0 ; i < words.length ; i ++)
@@ -187,7 +184,7 @@ public class Indexer implements Runnable  {
 				if(str == null)
 					continue ; 
 				InsertWords( str);
-				InsertContains(str, URL , Priority,String.valueOf(Index));
+				InsertContains(str, URL , Priority,Index);
 				Index += 1 ; // index of the word in the paragraph 
 			}
 		
@@ -227,17 +224,17 @@ public class Indexer implements Runnable  {
 		String[] Text = new String [4]; // 0 :URL 1:body 2:Headers 3:Title 
 		while (GetTextFromRs(Text)) {
 			
-			HandleText ( Text[1], Text[0] , "1"); // handle body 
+			HandleText ( Text[1], Text[0] , 1); // handle body 
 			
-			HandleText (  Text[2],  Text[0] , "2"); // handle headers 
+			HandleText (  Text[2],  Text[0] , 2); // handle headers 
 		  		
-			HandleText (  Text[3],  Text[0] , "3");  // handle Title 
+			HandleText (  Text[3],  Text[0] , 3);  // handle Title 
 			
 			
 		}
 	}
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws SQLException {
 	// Declare the JDBC objects.
 //			Connection con = null;
 //			CallableStatement cstmt = null;
@@ -247,21 +244,29 @@ public class Indexer implements Runnable  {
 //			
 			String query = "SELECT * FROM Page"; 
 			DBmanager DataBase = new DBmanager ();
+			
+			//ResultSet rs = DataBase.GetWordID("is");
+			//rs.next(); 
+		//	System.out.println(rs.getString("ID")); 
+			
+			
 			ResultSet rs = DataBase.executeQuery(query); 
 			ResultSet rs2 = DataBase.executeQuery(query); 
-			Indexer I1 = new  Indexer(rs , DataBase );
-			
-			
+			Indexer I1 = new  Indexer(rs , DataBase );			
+////			
+////			
 			int threadNum = 8 ; 
-			
+////			
 			Thread [] threads = new Thread [threadNum]; 
 			for (int i = 0 ; i <threadNum ; i ++ ){
+				
 				threads[i]= new Thread (I1);
+			
 				threads[i].setName("thread " +(i+1)+ " ");
 				threads[i].start();
 			}
-			
-			
+//			
+		
 		//	t1.start();
 			
 		//	t2.start();

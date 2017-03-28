@@ -405,6 +405,12 @@ public class Stemmer
 		      return output ; 
 		    
    }
+   
+   public static String CleanString (String input){
+	   
+//	   input.replace(arg0, arg1)
+	   return input; 
+   }
  public static int GetDelay (String Text){
 	   
 	   String[] words = Text.split(" "); 
@@ -427,64 +433,21 @@ public class Stemmer
 	    // int x = s.GetDelay(str)+1;
 	    //  System.out.println ("the output is: "+x ); 
 	      
-	      while(true){
-	    	  str = scanner.nextLine(); 
-	    	 
+	      str = "? will? hell? (william) come ya 3amo what*the fuck!!!! X+2}" ;
+	      String[] parts = str.split("[ ?!@{}()/<>;,._=*&^%$#@+]"); 
+	      for (int i = 0 ; i < parts.length ;i++ ){
 	    	  
-	    	  System.out.println ("the output is: "+  s.GetStemedString(str)); 
+	    	  if (parts[i].length()!=0)
+	    		  System.out.println(parts[i]);
+	    	  
 	      }
-//      for (int i = 0; i < args.length; i++)
-//      try
-//      {
-//         FileInputStream in = new FileInputStream(args[i]);
-//
-//         try
-//         { while(true)
-//
-//           {  int ch = in.read();
-//              if (Character.isLetter((char) ch))
-//              {
-//                 int j = 0;
-//                 while(true)
-//                 {  ch = Character.toLowerCase((char) ch);
-//                    w[j] = (char) ch;
-//                    if (j < 500) j++;
-//                    ch = in.read();
-//                    if (!Character.isLetter((char) ch))
-//                    {
-//                       /* to test add(char ch) */
-//                       for (int c = 0; c < j; c++) s.add(w[c]);
-//
-//                       /* or, to test add(char[] w, int j) */
-//                       /* s.add(w, j); */
-//
-//                       s.stem();
-//                       {  String u;
-//
-//                          /* and now, to test toString() : */
-//                          u = s.toString();
-//
-//                          /* to test getResultBuffer(), getResultLength() : */
-//                          /* u = new String(s.getResultBuffer(), 0, s.getResultLength()); */
-//
-//                          System.out.print(u);
-//                       }
-//                       break;
-//                    }
-//                 }
-//              }
-//              if (ch < 0) break;
-//              System.out.print((char)ch);
-//           }
-//         }
-//         catch (IOException e)
-//         {  System.out.println("error reading " + args[i]);
-//            break;
-//         }
-//      }
-//      catch (FileNotFoundException e)
-//      {  System.out.println("file " + args[i] + " not found");
-//         break;
-//      }
+	     // System.out.println ("the output is: "+   str.replace('?', ' ') );
+//	      while(true){
+//	    	  str = scanner.nextLine(); 
+//	    	 
+//	    	  
+//	    	  System.out.println ("the output is: "+  s.GetStemedString(str)); 
+//	      }
+
    }
 }
