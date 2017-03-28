@@ -111,12 +111,12 @@ public static void main(String[] args) {
 			t.start();
 		}
 		int last=0;
-		while(pagesCount.get()<=pagesThreshold) //wait for stopping condition.
+		int count;
+		while((count=pagesCount.get())<pagesThreshold) //wait for stopping condition.
 		{
-			int count=pagesCount.get();
 			if(count%5==0 && last!=count )
 			{
-				System.out.println(pagesCount.get()+" pages scrapped");
+				System.out.println(count+" pages scrapped");
 				last=count;
 			}
 		}
