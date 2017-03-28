@@ -47,13 +47,14 @@ public class DBmanager {
 		return out ; 
 	}
 	
-	synchronized public void InsertWord (int ID , String Word){ 
+	synchronized public void InsertWord (int ID , String Word , String StemmedWord){ 
 		try {
 		CallableStatement stmt = null;
-		stmt = con.prepareCall("{call InsertWord (? , ?)}");
+		stmt = con.prepareCall("{call InsertWord (? , ?, ?)}");
 		
 		stmt.setInt(1, ID);
 		stmt.setString(2, Word);
+		stmt.setString(3, StemmedWord);
 
 		//stmt.registerOutParameter("ID",java.sql.Types.INTEGER);
 		stmt.execute(); 
@@ -85,6 +86,41 @@ public class DBmanager {
 		
 	}
 	
+	synchronized public void DeleteURL (String URL ){ 
+		try {
+		CallableStatement stmt = null;
+		stmt = con.prepareCall("{call DeleteURL (?)}");
+		
+		stmt.setString(1,URL );
+
+
+		//stmt.registerOutParameter("ID",java.sql.Types.INTEGER);
+		stmt.execute(); 
+		
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
+	synchronized public void MarkURLIndexed  (String URL ){ 
+		try {
+		CallableStatement stmt = null;
+		stmt = con.prepareCall("{call MarkURLIndexed (?)}");
+		
+		stmt.setString(1,URL );
+
+
+		//stmt.registerOutParameter("ID",java.sql.Types.INTEGER);
+		stmt.execute(); 
+		
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
 	synchronized public boolean executeUpdate(String stat) //returns false if update failed.
 	{
 		Statement stmt = null;

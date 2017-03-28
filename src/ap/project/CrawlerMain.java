@@ -46,6 +46,7 @@ public static void main(String[] args) {
 		{
 			System.out.println("Clearing existing database...");
 			DBman.executeUpdate("Delete from PointsTo"); //clear database.
+			DBman.executeUpdate("Delete from UContains"); 
 			DBman.executeUpdate("Delete from Page");
 		}
 		else

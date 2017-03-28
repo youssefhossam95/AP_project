@@ -433,8 +433,11 @@ public class Stemmer
 	    // int x = s.GetDelay(str)+1;
 	    //  System.out.println ("the output is: "+x ); 
 	      
-	      str = "? will? hell? (william) come ya 3amo what*the fuck!!!! X+2}" ;
-	      String[] parts = str.split("[ ?!@{}()/<>;,._=*&^%$#@+]"); 
+	      str = "? will? hell? -(william)- come() ya[hel] \"3amo\" what*the ya(((elahy)) fuck!!!! X+2}" ;
+	      String test ="\"1995 lol\""; 
+	      System.out.println(test);
+	      String[] parts = str.split("[ \\[\\]\"?!@{}()/<>;,._=*&#^$@+-]"); 
+	      //?!@{}()/<>;,._=*&#@+-\\[\\]\"
 	      for (int i = 0 ; i < parts.length ;i++ ){
 	    	  
 	    	  if (parts[i].length()!=0)

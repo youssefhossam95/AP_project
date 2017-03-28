@@ -1,5 +1,6 @@
 
 package  ap.project;
+import java.util.Scanner;
 
 import java.sql.*;
 import java.io.* ; 
@@ -12,6 +13,7 @@ public class Indexer implements Runnable  {
 	DBmanager DB; 
 	 int MaxID =0 ; 
 	int UContainsCount = 0 ;
+	int IndexedPages =0; 
 	public void run () {
 		
 		ProcessPageTable();
@@ -114,8 +116,25 @@ public class Indexer implements Runnable  {
 		
 	}
 	
+	public void GetUContainsCount () 
+	{
+		String query = "SELECT COUNT(*) AS Ucount FROM UContains" ; 
+		try {
+		
+			ResultSet rs = DB.executeQuery(query);
+			rs.next(); 
+			 UContainsCount = rs.getInt("Ucount");  ;
+
+		} catch (SQLException e) {
+			System.out.println("ana Get UContain count ");
+
+			e.printStackTrace();
+		}
+		
+	}
 	
-	synchronized public void InsertWords (String Word )
+	
+	synchronized public void InsertWords (String Word, String StemmedWord )
 	{
 		//String query = "SELECT * FROM Word WHERE Text ='" + Word +"'" ; 
 
@@ -127,10 +146,12 @@ public class Indexer implements Runnable  {
 						 GetMaxID(); 
 					
 					MaxID = MaxID + 1 ; 
+					if (MaxID % 1000 == 0 )
+						System.out.println("Words in The Data Base = "+ MaxID);
+						
 					
-
-			    	DB.InsertWord(MaxID, Word);
-			    	System.out.println("inserted the Word: " + Word );
+			    	DB.InsertWord(MaxID, Word, StemmedWord);
+			    	//System.out.println("inserted the Word: " + Word );
 					
 				}
 		} catch (SQLException e) {
@@ -156,8 +177,8 @@ public class Indexer implements Runnable  {
 				//System.out.print(Thread.currentThread().getName());
 				//System.out.println(query);
 				UContainsCount ++ ; 
-				if (UContainsCount % 1000 == 0)
-					System.out.println(UContainsCount);
+				if (UContainsCount % 2000 == 0)
+					System.out.println("Ucontains Records= " + UContainsCount);
 		     DB.InsertUContains(URL, Integer.parseInt(ID), Priority, Index);
 					
 				
@@ -175,7 +196,7 @@ public class Indexer implements Runnable  {
 	{
 		if (Text == null)
 			return ; 	
-	    String[]words = Text.split("[ ?!@{}()/<>;,._=*&^%$#@+]"); 
+	    String[]words = Text.split("[ \\[\\]\"?!@{}()/<>;:,._=*&#^$@+-]"); 
 	    Stemmer s = new Stemmer();
 	    int Index =  1 ; 
 		for (int i = 0 ; i < words.length ; i ++)
@@ -183,8 +204,8 @@ public class Indexer implements Runnable  {
 				String str = s.GetStemedString(words[i]); 
 				if(str == null)
 					continue ; 
-				InsertWords( str);
-				InsertContains(str, URL , Priority,Index);
+				InsertWords(  words[i] , str);
+				InsertContains(words[i], URL , Priority,Index);
 				Index += 1 ; // index of the word in the paragraph 
 			}
 		
@@ -222,15 +243,21 @@ public class Indexer implements Runnable  {
 	{
 	
 		String[] Text = new String [4]; // 0 :URL 1:body 2:Headers 3:Title 
+		
+		
 		while (GetTextFromRs(Text)) {
-			
-			HandleText ( Text[1], Text[0] , 1); // handle body 
+		    DB.DeleteURL(Text[0]); // delete any any records in the ucontains table with this url 
+		    GetUContainsCount(); 
+		    System.out.println(Thread.currentThread().getName() +" is Now Indexing" + Text[0]);
+		    HandleText ( Text[1], Text[0] , 1); // handle body 
 			
 			HandleText (  Text[2],  Text[0] , 2); // handle headers 
 		  		
 			HandleText (  Text[3],  Text[0] , 3);  // handle Title 
 			
-			
+			DB.MarkURLIndexed(Text[0]);
+			System.out.println("Finished indexing:"+Text[0]);
+			System.out.println("Indexed Pages= " + ++IndexedPages);
 		}
 	}
 	
@@ -242,31 +269,40 @@ public class Indexer implements Runnable  {
 //			Statement st = null ; 
 //			int MaxID = 0 ; 
 //			
-			String query = "SELECT * FROM Page"; 
+			String query = "SELECT * FROM Page WHERE isIndexed = 0 "; 
 			DBmanager DataBase = new DBmanager ();
-			
-			//ResultSet rs = DataBase.GetWordID("is");
-			//rs.next(); 
-		//	System.out.println(rs.getString("ID")); 
-			
-			
+	
 			ResultSet rs = DataBase.executeQuery(query); 
-			ResultSet rs2 = DataBase.executeQuery(query); 
+
 			Indexer I1 = new  Indexer(rs , DataBase );			
 ////			
+			Scanner sc = new Scanner (System.in); 
+			System.out.println("Enter Number of threads you want to use:");
+			
+			int threadNum = sc.nextInt(); 
 ////			
-			int threadNum = 8 ; 
-////			
+			System.out.println("Starting The Indexing Process...");
+
 			Thread [] threads = new Thread [threadNum]; 
 			for (int i = 0 ; i <threadNum ; i ++ ){
 				
 				threads[i]= new Thread (I1);
 			
-				threads[i].setName("thread " +(i+1)+ " ");
+				threads[i].setName("Thread " +(i+1)+ " ");
 				threads[i].start();
 			}
 //			
-		
+			for (int i = 0 ; i <threadNum ; i ++ ){
+				
+				try {
+					threads[i].join();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} 
+			} 
+		System.out.println("Indexing is OVER!");
+			
 		//	t1.start();
 			
 		//	t2.start();
