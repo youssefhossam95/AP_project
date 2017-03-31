@@ -14,7 +14,7 @@ import com.microsoft.sqlserver.jdbc.SQLServerException;
 import javafx.animation.KeyValue.Type;
 public class DBmanager {
 
-	private Connection con;
+	public Connection con;
 	DBmanager()
 	{
 		String url="jdbc:microsoft:sqlserver://tcp:YOUSSEF:1433;";

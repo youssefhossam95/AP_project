@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
@@ -55,20 +56,33 @@ public class Crawler implements Runnable {
 			if(index!=-1)
 				currentURL=currentURL.substring(0, index);
 			Document doc = null;
+			PreparedStatement ps=null;
+			try {
+				ps=Dbman.con.prepareStatement("delete from page where url=(?)");
+				ps.setString(1, currentURL);
+			} catch (SQLException e1) {
+				
+				e1.printStackTrace();
+			}
 			try
 			{	
 				if(!robot.isAllowed(currentURL))
 					continue;
+				
 				if((Dbman.tryInsertPage(currentURL) || Dbman.isOldPage(currentURL))) //to fetch page it must be either an old page or a non existing page
 				{	
 					try {
 						doc = Jsoup.connect(currentURL).get();
 					} catch (Exception e) {
 						e.printStackTrace();
+						ps.execute();
 						continue;
 					}
 					if(doc==null) //problem in fetching page.
+					{
+						ps.execute();
 						continue;
+					}
 					pagesCount.incrementAndGet();
 					System.out.println("Thread "+Thread.currentThread().getName()+" is crawling...");
 				    Elements links = doc.select("a[href]");
@@ -90,7 +104,14 @@ public class Crawler implements Runnable {
 						}
 					}
 				}
-			}catch(Exception e){e.printStackTrace();}
+			}catch(Exception e){
+				e.printStackTrace();
+				try {
+					ps.execute();
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
+				}
 			
 		}
 	}
