@@ -31,7 +31,7 @@ public class Crawler implements Runnable {
 		try {
 			robot=new RobotDetector(map);
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.out.println("Thread "+Thread.currentThread().getName()+": "+e.getMessage());
 		}
 	}
 	
@@ -44,13 +44,13 @@ public class Crawler implements Runnable {
 			try {
 				currentURL= linksQ.take();
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				System.out.println("Thread "+Thread.currentThread().getName()+": "+e.getMessage());
 				return;
 			}
 			try {
 				currentURL=java.net.URLDecoder.decode(currentURL,"UTF-8"); //hawlo mn el URL encoding el utf-8
 			} catch (UnsupportedEncodingException e1) {
-				e1.printStackTrace();
+				System.out.println("Thread "+Thread.currentThread().getName()+": "+e1.getMessage());
 			}
 			int index=currentURL.indexOf('#');//sheel el b3d el shbak 3shn byb2a mogrd targeting.
 			if(index!=-1)
@@ -62,7 +62,7 @@ public class Crawler implements Runnable {
 				ps.setString(1, currentURL);
 			} catch (SQLException e1) {
 				
-				e1.printStackTrace();
+				System.out.println("Thread "+Thread.currentThread().getName()+": "+e1.getMessage());
 			}
 			try
 			{	
@@ -74,7 +74,7 @@ public class Crawler implements Runnable {
 					try {
 						doc = Jsoup.connect(currentURL).get();
 					} catch (Exception e) {
-						e.printStackTrace();
+						System.out.println("Thread "+Thread.currentThread().getName()+": "+e.getMessage());
 						ps.execute();
 						continue;
 					}
@@ -100,16 +100,16 @@ public class Crawler implements Runnable {
 						try {
 							linksQ.put(link);
 						} catch (InterruptedException e) {
-							e.printStackTrace();
+							System.out.println("Thread "+Thread.currentThread().getName()+": "+e.getMessage());
 						}
 					}
 				}
 			}catch(Exception e){
-				e.printStackTrace();
+				System.out.println("Thread "+Thread.currentThread().getName()+": "+e.getMessage());
 				try {
 					ps.execute();
 				} catch (SQLException e1) {
-					e1.printStackTrace();
+					System.out.println("Thread "+Thread.currentThread().getName()+": "+e1.getMessage());
 				}
 				}
 			
