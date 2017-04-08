@@ -68,7 +68,6 @@ public class Crawler implements Runnable {
 			{	
 				if(!robot.isAllowed(currentURL))
 					continue;
-				
 				if((Dbman.tryInsertPage(currentURL) || Dbman.isOldPage(currentURL))) //to fetch page it must be either an old page or a non existing page
 				{	
 					try {
