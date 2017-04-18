@@ -13,7 +13,7 @@ import org.jsoup.select.Elements;
 public class CrawlerMain {
 
 public static void main(String[] args) {
-		
+	
 		int pagesThreshold; //stopping condition.
 		System.out.println("Enter the number of threads you'd like to use: ");
 		Scanner s=new Scanner(System.in);
@@ -117,7 +117,6 @@ public static void main(String[] args) {
 			if(count%5==0 && last!=count )
 			{
 				System.out.println(count+" pages scrapped");
-				System.out.println(links.size());
 				last=count;
 			}
 		}

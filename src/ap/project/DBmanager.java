@@ -17,7 +17,7 @@ public class DBmanager {
 	public Connection con;
 	DBmanager()
 	{
-		String url="jdbc:microsoft:sqlserver://tcp:YOUSSEF:1433;";
+		String url="jdbc:microsoft:sqlserver://tcp:AHMED-PC\\SQLEXPRESS:1433;databaseName=SearchEngine;";
 		SQLServerDataSource ds = new SQLServerDataSource();
 		ds.setIntegratedSecurity(true); 
 		ds.setDatabaseName("SearchEngine");

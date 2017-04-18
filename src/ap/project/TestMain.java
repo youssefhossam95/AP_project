@@ -4,15 +4,13 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
 public class TestMain {
 	public static void main(String[] args) throws java.io.IOException {
 		// TODO Auto-generated method stub
-		        String url = "https://en.wikipedia.org/wiki/Cristiano_Ronaldo";
+		        String url = "http://www.asic-world.com/verilog/verilog_one_day2.html";
 		        print("Fetching %s...", url);
 		        Document doc = Jsoup.connect(url).get();
-		        Elements links = doc.select("a[href]");
-		        System.out.println(links.size());
+//		        Elements links = doc.select("a[href]");
 //		        Elements media = doc.select("[src]");
 //		        Elements imports = doc.select("link[href]");
 		        RobotDetector rb=new RobotDetector(new ConcurrentHashMap<String,TimeCapsule>());
