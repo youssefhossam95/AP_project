@@ -29,7 +29,7 @@ public class DBmanager {
 		}
 	}
 	
-	synchronized public ResultSet GetWordID (String Word){
+	 public ResultSet GetWordID (String Word){
 		ResultSet out =null; 
 		try {
 		CallableStatement stmt = null;
@@ -47,26 +47,23 @@ public class DBmanager {
 		return out ; 
 	}
 	
-	synchronized public void InsertWord (int ID , String Word , String StemmedWord){ 
-		try {
+	 public void InsertWord (int ID , String Word , String StemmedWord , int Difference) throws SQLException{ 
+		
 		CallableStatement stmt = null;
-		stmt = con.prepareCall("{call InsertWord (? , ?, ?)}");
+		stmt = con.prepareCall("{call InsertWord (? , ?, ?, ?)}");
 		
 		stmt.setInt(1, ID);
 		stmt.setString(2, Word);
 		stmt.setString(3, StemmedWord);
-
+		stmt.setInt(4, Difference) ; 
 		//stmt.registerOutParameter("ID",java.sql.Types.INTEGER);
 		stmt.execute(); 
 		
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		
 		
 	}
 	
-	synchronized public void InsertUContains (String URL , int ID , int Priority , int Index ){ 
+	 public void InsertUContains (String URL , int ID , int Priority , int Index ){ 
 		try {
 		CallableStatement stmt = null;
 		stmt = con.prepareCall("{call InsertUContains (? , ? , ? , ?)}");
@@ -86,7 +83,7 @@ public class DBmanager {
 		
 	}
 	
-	synchronized public void DeleteURL (String URL ){ 
+	 public void DeleteURL (String URL ){ 
 		try {
 		CallableStatement stmt = null;
 		stmt = con.prepareCall("{call DeleteURL (?)}");
@@ -104,7 +101,7 @@ public class DBmanager {
 		
 	}
 	
-	synchronized public void MarkURLIndexed  (String URL ){ 
+	 public void MarkURLIndexed  (String URL ){ 
 		try {
 		CallableStatement stmt = null;
 		stmt = con.prepareCall("{call MarkURLIndexed (?)}");

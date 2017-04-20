@@ -24,7 +24,8 @@ public class Indexer implements Runnable  {
 	{
 		rs = Rs ; 
 		DB = DataBase ; 
-	
+		GetMaxID(); 
+
 		
 		
 	}
@@ -103,7 +104,7 @@ public class Indexer implements Runnable  {
 		
 			ResultSet rs = DB.executeQuery(query);
 			rs.next(); 
-			 MaxID = rs.getInt("ID");  ;
+			 MaxID = rs.getInt("ID")+1  ; // maxId contain the ID of the next word to be inserted 
 
 		} catch (SQLException e) {
 			System.out.println("ana fe GetMax ID ");
@@ -124,6 +125,7 @@ public class Indexer implements Runnable  {
 			ResultSet rs = DB.executeQuery(query);
 			rs.next(); 
 			 UContainsCount = rs.getInt("Ucount");  ;
+			
 
 		} catch (SQLException e) {
 			System.out.println("ana Get UContain count ");
@@ -138,27 +140,24 @@ public class Indexer implements Runnable  {
 	{
 		//String query = "SELECT * FROM Word WHERE Text ='" + Word +"'" ; 
 
-		ResultSet Rs = DB.GetWordID(Word);
 		try {
-			if (! Rs.next())
-				{
-					if (MaxID == 0 )
-						 GetMaxID(); 
-					
+				
+			    	DB.InsertWord(MaxID, Word, StemmedWord , Word.length()- StemmedWord.length());
+
 					MaxID = MaxID + 1 ; 
 					if (MaxID % 1000 == 0 )
 						System.out.println("Words in The Data Base = "+ MaxID);
 						
 					
-			    	DB.InsertWord(MaxID, Word, StemmedWord);
 			    	//System.out.println("inserted the Word: " + Word );
 					
-				}
+				
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			System.out.println("ana fe InsertWords ");
-
-			e.printStackTrace();
+		//	System.out.println("ana fe InsertWords ");
+		   //   Scanner scanner = new Scanner (System.in);
+		   //   scanner.nextLine(); 
+		//	e.printStackTrace();
 		}
 		
 	}
@@ -273,8 +272,21 @@ public class Indexer implements Runnable  {
 			DBmanager DataBase = new DBmanager ();
 	
 			ResultSet rs = DataBase.executeQuery(query); 
+			
+			 query = "SELECT COUNT(*) AS p FROM Page" ;
+			 
+			 ResultSet Temp = DataBase.executeQuery(query); 
+			 Temp.next(); 
+			 int NumberOfPages = Temp.getInt("p"); 
+			 Temp = DataBase.executeQuery("SELECT count(*) as p from Page where [isIndexed] = 0"); 
+			 Temp.next(); 
+			 int UnIndexedPages = Temp.getInt("p"); 
+			 
+			Indexer I1 = new  Indexer(rs , DataBase );	
+			I1.IndexedPages = NumberOfPages - UnIndexedPages   ; 
+			
+			System.out.println("number of indexed pages =" +I1.IndexedPages);
 
-			Indexer I1 = new  Indexer(rs , DataBase );			
 ////			
 			Scanner sc = new Scanner (System.in); 
 			System.out.println("Enter Number of threads you want to use:");
