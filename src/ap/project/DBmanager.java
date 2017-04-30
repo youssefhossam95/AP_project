@@ -310,5 +310,192 @@ public class DBmanager {
 		}
         return false;
 	}
+////sama
+	///--Get the wordID for a specific word without stemming
+	public int GetID1(String word) throws SQLException
+	{
+    	int x;
+    	ResultSet rs=this.GetWordID(word);
+    	rs.next();
+    	if(rs==null) 
+    		x=0;
+    	else	
+    		x=rs.getInt(1);
+    	return x;
+
+		
+   
+		
+		
+	}
+	
+	// NUMBER OF FETCHED PAGES
+	public int GetNumOfFetchedPages() 
+	{int x=0;
+		CallableStatement stmt = null;
+		try {
+			stmt = con.prepareCall("{call GetFetchedPages(?)}");
+			stmt.registerOutParameter(1, Types.INTEGER);
+			ResultSet rs=stmt.executeQuery();
+			rs.next();
+			x=rs.getInt(1);
+		} 
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+			}
+	
+	
+     return x;
+}
+	
+	//--Get the stemmed word for a specific word id
+	
+	public String GetStemmedWord(int ID)
+	{
+		String x=" ";
+		CallableStatement stmt = null;
+		try {
+			stmt = con.prepareCall("{call GetStemWord(?,?)}");
+			stmt.setInt(1, ID);
+			stmt.registerOutParameter(2, java.sql.Types.VARCHAR);
+			ResultSet rs=stmt.executeQuery();
+			rs.next();
+			x=rs.getString(1);
+		} 
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+			}
+	
+	
+     return x;
+	}
+
+	//--Get the urls for a specific wordID 
+	public ResultSet GetURL(int ID)
+	{
+		ResultSet rs =null; 
+		try {
+		CallableStatement stmt = null;
+		stmt = con.prepareCall("{call GetURL (?)}");
+		
+		stmt.setInt(1, ID);
+		
+		rs = stmt.executeQuery(); 
+		
+		} catch (SQLException e) {
+			
+			e.printStackTrace();
+		}
+		
+		return rs ; 
+	}
+
+	
+	// number of pages for this word
+	
+	public int NumPagesOfThisWord(int id) throws SQLException
+	{
+		ResultSet rs=this.GetURL(id);
+		int count=0;
+		while(rs.next())
+		{
+			count++;
+		}
+		return count;
+	}
+
+	//--the number of words in this url
+	
+	public int GetNumOfWords(String url)
+	{
+		int x=0;
+		CallableStatement stmt = null;
+		try {
+			stmt = con.prepareCall("{call GetCountOfWords(?,?)}");
+			stmt.setString(1, url);
+			stmt.registerOutParameter(2, Types.INTEGER);
+			ResultSet rs=stmt.executeQuery();
+			rs.next();
+			x=rs.getInt(1);
+		} 
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+			}
+	
+	
+     return x;
+	}
+
+	//--number of occ of this word in this url
+	public int GetCountOfThisWord(String URL, int ID)
+	{
+		int x=0;
+		CallableStatement stmt = null;
+		try {
+			stmt = con.prepareCall("{call GetCountOfThisWord(?,?,?)}");
+			stmt.setString(1, URL);
+			stmt.setInt(2, ID);
+			stmt.registerOutParameter(3, Types.INTEGER);
+			ResultSet rs=stmt.executeQuery();
+			rs.next();
+			x=rs.getInt(1);
+		} 
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+			}
+	
+	
+     return x;
+		
+	}
+	
+	
+    // get priority
+	public ResultSet GetPriority(int id)
+	{
+		//int x=0;
+		ResultSet rs=null;
+		CallableStatement stmt = null;
+		try {
+			stmt = con.prepareCall("{call GetPriority(?,?)}");
+			stmt.setInt(1, id);
+			stmt.registerOutParameter(2, Types.INTEGER);
+			 rs=stmt.executeQuery();
+			//rs.next();
+			//x=rs.getInt(1);
+		} 
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+			}
+		//return x;
+		return rs;
+	}
+//  //--get the number of pages that this word occ in
+//	public int GetNumPagesOfThisWord(int ID)
+//	{
+//		int x=0;
+//		CallableStatement stmt = null;
+//		try {
+//			stmt = con.prepareCall("{call GetNumPages(?,?)}");
+//			stmt.setInt(1, ID);
+//			stmt.registerOutParameter(2, Types.INTEGER);
+//			ResultSet rs=stmt.executeQuery();
+//			rs.next();
+//			x=rs.getInt(1);
+//		} 
+//		catch (SQLException e)
+//		{
+//			e.printStackTrace();
+//			}
+//	
+//	
+//   return x;
+//	}
+//
 }
 
