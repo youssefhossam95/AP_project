@@ -250,9 +250,9 @@ public class Indexer implements Runnable  {
 		    System.out.println(Thread.currentThread().getName() +" is Now Indexing" + Text[0]);
 		    HandleText ( Text[1], Text[0] , 1); // handle body 
 			
-			HandleText (  Text[2],  Text[0] , 2); // handle headers 
+			HandleText (  Text[2],  Text[0] , 10); // handle headers 
 		  		
-			HandleText (  Text[3],  Text[0] , 3);  // handle Title 
+			HandleText (  Text[3],  Text[0] , 50);  // handle Title 
 			
 			DB.MarkURLIndexed(Text[0]);
 			System.out.println("Finished indexing:"+Text[0]);

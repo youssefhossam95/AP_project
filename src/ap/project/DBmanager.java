@@ -17,7 +17,7 @@ public class DBmanager {
 	public Connection con;
 	DBmanager()
 	{
-		String url="jdbc:microsoft:sqlserver://tcp:AHMED-PC\\SQLEXPRESS:1433;databaseName=SearchEngine;";
+		String url="jdbc:microsoft:sqlserver://tcp:SAMA\\SQLEXPRESS:1433;databaseName=SearchEngine;";
 		SQLServerDataSource ds = new SQLServerDataSource();
 		ds.setIntegratedSecurity(true); 
 		ds.setDatabaseName("SearchEngine");
@@ -438,6 +438,7 @@ public class DBmanager {
 			stmt = con.prepareCall("{call GetCountOfThisWord(?,?,?)}");
 			stmt.setString(1, URL);
 			stmt.setInt(2, ID);
+			
 			stmt.registerOutParameter(3, Types.INTEGER);
 			ResultSet rs=stmt.executeQuery();
 			rs.next();
@@ -457,7 +458,7 @@ public class DBmanager {
     // get priority
 	public ResultSet GetPriority(int id)
 	{
-		//int x=0;
+		
 		ResultSet rs=null;
 		CallableStatement stmt = null;
 		try {
@@ -472,9 +473,128 @@ public class DBmanager {
 		{
 			e.printStackTrace();
 			}
-		//return x;
+		
 		return rs;
 	}
+	
+	
+	
+	//--Get the IDs for stemmed word
+	public ResultSet GetStemmedIDs(String Stemmed)
+	{
+		ResultSet out =null; 
+		try {
+		CallableStatement stmt = null;
+		stmt = con.prepareCall("{call GetStemmedID1 (?)}");
+		
+		stmt.setString(1, Stemmed);
+		
+		out = stmt.executeQuery(); 
+		
+		
+		} catch (SQLException e) {
+			
+			e.printStackTrace();
+		}
+		
+		return out ; 
+	}
+	
+	
+	
+	//--Get all original words for this stemmed word
+		public ResultSet GetOriginalWords(String Stemmed)
+		{
+			ResultSet out =null; 
+			try {
+			CallableStatement stmt = null;
+			stmt = con.prepareCall("{call GetStemmedWords (?)}");
+			
+			stmt.setString(1, Stemmed);
+			
+			out = stmt.executeQuery(); 
+			
+			
+			} catch (SQLException e) {
+				
+				e.printStackTrace();
+			}
+			
+			return out ; 
+		}
+		
+		
+		public ResultSet GetURLsOfWord(String Stemmed)
+		{
+			ResultSet out =null; 
+			try {
+			CallableStatement stmt = null;
+			stmt = con.prepareCall("{call URLsOfThisStem (?)}");
+			
+			stmt.setString(1, Stemmed);
+			
+			out = stmt.executeQuery(); 
+			
+			
+			} catch (SQLException e) {
+				
+				e.printStackTrace();
+			}
+			
+			return out ; 
+		}
+	
+		public ResultSet GetPrioritiesAndDiff(String URL, String stem)
+		{
+			ResultSet out =null; 
+			try {
+			CallableStatement stmt = null;
+			stmt = con.prepareCall("{call GetPriorityAndDiff(?,?)}");
+			
+			stmt.setString(1, URL);
+			stmt.setString(2, stem);
+			
+			
+			out = stmt.executeQuery(); 
+			
+			
+			} catch (SQLException e) {
+				
+				e.printStackTrace();
+			}
+			
+			return out ; 
+		}
+	
+		
+		public int GetPopularity(String URL)
+		{
+			ResultSet out =null; 
+			int Popularity=0;
+			try {
+			CallableStatement stmt = null;
+			stmt = con.prepareCall("{call GetPopularity(?,?)}");
+			
+			stmt.setString(1, URL);
+			stmt.registerOutParameter(2, Types.INTEGER);
+			
+			
+			out = stmt.executeQuery(); 
+			out.next();
+		    Popularity=out.getInt(1);
+			
+			
+			
+			} catch (SQLException e) {
+				
+				e.printStackTrace();
+			}
+			
+			return Popularity ; 
+		}
+	
+	
+	
 //  //--get the number of pages that this word occ in
 //	public int GetNumPagesOfThisWord(int ID)
 //	{
