@@ -1,0 +1,3 @@
+- First execute the "script_phase1.sql" file in ms sql server management studio inorder to create the ms sql database.
+- To start the crawler program -> run the "CrawlerMain.java" file and enter the required data.
+- To start the indexer program -> run the "Indexer.java" file and enter the required data.
