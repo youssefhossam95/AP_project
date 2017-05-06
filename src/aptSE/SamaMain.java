@@ -22,7 +22,7 @@ public class SamaMain {
 		//System.out.print(id);
 		//int number=db.GetNumOfFetchedPages();
 		//System.out.print(number);
-		int id=db.GetID1("Accessibility");
+		//int id=db.GetID1("Accessibility");
 		//System.out.print(id);
 		//String s=db.GetStemmedWord(id);
 		
@@ -40,16 +40,49 @@ public class SamaMain {
 		//System.out.print(num);
 		//https://en.wikipedia.org/wiki/Big_data
 		
-		String url="https://en.wikipedia.org/wiki/Big_data";
-//		int num= db.GetNumOfWord(url);
-//		System.out.print(num);
-		//int num=db.GetCountOfThisWord(url, id);
-		ResultSet rs=db.GetPriority(13);
-		while(rs.next())
+//		String url="https://en.wikipedia.org/wiki/Big_data";
+////		int num= db.GetNumOfWord(url);
+////		System.out.print(num);
+//		//int num=db.GetCountOfThisWord(url, id);
+//		ResultSet rs=db.GetPriority(13);
+//		while(rs.next())
+//		{
+//			int num=rs.getInt(1);
+//			System.out.print(num);
+//		}
+//		ArrayList<ArrayList<Integer>> oout=new ArrayList<ArrayList<Integer>>();
+//		ArrayList<Integer> inn=new ArrayList<Integer>();
+//		
+//		inn.add(1);
+//		inn.add(2);
+//		oout.add(inn);
+//		inn.clear();
+//		inn.add(3);
+//		inn.add(4);
+//		oout.add(inn);
+//		inn.clear();
+//		inn.add(5);
+//		inn.add(6);
+//		oout.add(inn);
+//		System.out.print(oout.size());
+//		System.out.print(oout.get(0).size());
+//		
+//		
+		String Search="new";
+		String[] Links=null;
+		Searcher s= new Searcher(Search,db);
+		Links=s.execute();
+		//System.out.println("haii");
+		for(int i=0;i<Links.length;i++)
 		{
-			int num=rs.getInt(1);
-			System.out.print(num);
+			
+			System.out.println(Links[i]);
 		}
+			
+			  
+		//System.out.println("haii");
+			
+		
 		
 		//System.out.print(num);
 	}
