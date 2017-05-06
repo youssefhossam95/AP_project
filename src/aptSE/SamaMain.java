@@ -68,7 +68,7 @@ public class SamaMain {
 //		System.out.print(oout.get(0).size());
 //		
 //		
-		String Search="new";
+		String Search="ahmed";
 		String[] Links=null;
 		Searcher s= new Searcher(Search,db);
 		Links=s.execute();

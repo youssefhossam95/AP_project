@@ -138,10 +138,12 @@ public void calculateTF() throws SQLException
 					NumOfOccOfThisWord+=((1*currentPriority)/(currentDiff+2));
 				}
 			}
-			
+			if(db.GetNumOfWords(currentURL)!=0)
+			{
 			double tf=NumOfOccOfThisWord/db.GetNumOfWords(currentURL);
 			double idf_tf=IDF[i]*tf;
 			addPage(currentURL, idf_tf);//donc hasabna el relevanve
+			}
 		}
 	}
 	
