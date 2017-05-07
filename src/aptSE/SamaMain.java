@@ -68,7 +68,7 @@ public class SamaMain {
 //		System.out.print(oout.get(0).size());
 //		
 
-		String Search="data";
+		String Search="data mining";
 
 //		
 

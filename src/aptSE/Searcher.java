@@ -77,7 +77,9 @@ public void calculateIDF() throws SQLException
 			countOfPages=0;
 			idTemp=db.GetID1(SplitWords[i]);
 			IDs[i]=idTemp;
-			currentStem=db.GetStemmedWord(IDs[i]);
+			Stemmer s = new Stemmer () ;  
+			//currentStem=db.GetStemmedWord(IDs[i]);
+			currentStem = s.GetStemedString(SplitWords[i]); 
 			stemIDs=db.GetStemmedIDs(currentStem);
 			while(stemIDs.next()) //hanzbtha
 			{
@@ -88,7 +90,7 @@ public void calculateIDF() throws SQLException
 				
 			}
 			
-			double a= NumFetchedPages/countOfPages;
+			double a= NumFetchedPages/( countOfPages + 1 ); // is that 1 ok ?? 
 			IDF[i]=Math.log10(a);	
 			
 			
@@ -125,13 +127,14 @@ public void calculateTF() throws SQLException
 			currentPriority=rsOfWords.getInt("Priorityy");
 			currentDiff=rsOfWords.getInt("Difference");
 			currentURL=rsOfWords.getString("URL");
-			if(!URLs.containsKey(currentURL))
-			{
-				URLWords=db.GetNumOfWords(currentURL);
-				URLs.put(currentURL, URLWords);
-			}
-			else 
-				URLWords = URLs.get(currentURL); 
+			URLWords = rsOfWords.getInt("NumberOfWords"); 
+//			if(!URLs.containsKey(currentURL))
+//			{
+//				URLWords=db.GetNumOfWords(currentURL);
+//				URLs.put(currentURL, URLWords);
+//			}
+//			else 
+//				URLWords = URLs.get(currentURL); 
 			
 			if(currentID==IDs[i])
 			{
@@ -221,6 +224,49 @@ public String[] getLinksInOrder() //returns ranked urls
 	return links;
 }
 
+
+public String []  PraseSearch (){ 
+	List <String> URLSList  = new ArrayList<String>() ; 
+	
+	ResultSet rs ; 
+	rs =  db.GetWordIndex(SplitWords[0]); 
+	
+	try {
+		while (rs.next())
+		{
+			String url = rs.getString("URL"); 
+			int indo = rs.getInt("Index"); 
+			boolean OK = true ; 
+			for (int i = 1 ; i < SplitWords.length ; i ++ )
+			{
+				if (! db.CheckWordInIndex(SplitWords[i], url, indo + i)) 
+				{
+					OK = false ; 
+					break ; 
+				}
+				
+			}
+			
+			if ( OK )
+				URLSList.add(url); 	
+		}
+	} catch (SQLException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	//URLSList.add( rs.getString("URL")); 
+	
+	
+				
+	String [] URLS = new String [URLSList.size()] ; 
+	for ( int i = 0 ; i < URLSList.size() ; i ++ )
+		URLS[i] = URLSList.get(i); 
+	
+
+	return URLS;
+}
+
+
 public void addPage(String url,Double rankScore) //adds a page to the map or update score if exists
 {
 	
@@ -270,6 +316,10 @@ class Page implements Comparable<Page>{
     	return this.url.equals(p.url);
     }
 }
+
+
+
+
 
 
 //public void brouillon()

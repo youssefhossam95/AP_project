@@ -236,6 +236,25 @@ public class DBmanager {
 			stmt.setString(4, header);
 			stmt.execute();
 	}
+	
+	
+	 public void UpdateNumberOfWords(String url,int Num) 
+	{
+		CallableStatement stmt = null;
+			try {
+				stmt = con.prepareCall("{call UpdateNumberOfWords(?,?)}");
+				stmt.setInt(1, Num);
+
+				stmt.setString(2, url);
+
+
+				stmt.execute();
+			
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	}
 	synchronized public boolean isPageExists(String url)
 	{
 		CallableStatement stmt = null;
@@ -316,8 +335,8 @@ public class DBmanager {
 	{
     	int x;
     	ResultSet rs=this.GetWordID(word);
-    	rs.next();
-    	if(rs==null) 
+    	
+    	if(!rs.next()) 
     		x=0;
     	else	
     		x=rs.getInt(1);
@@ -500,6 +519,54 @@ public class DBmanager {
 		return out ; 
 	}
 	
+	
+
+public ResultSet GetWordIndex (String word )
+	{
+		//int x=0;
+		ResultSet rs=null;
+		CallableStatement stmt = null;
+		try {
+			stmt = con.prepareCall("{call GetWordIndex (?)}");
+			stmt.setString(1, word);
+			rs=stmt.executeQuery();
+			//rs.next();
+			//x=rs.getInt(1);
+		} 
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+			}
+		//return x;
+		return rs;
+	}
+	
+	public boolean  CheckWordInIndex  (String word  , String url , int index )
+	{
+		boolean  x=false ;
+		ResultSet rs=null;
+		CallableStatement stmt = null;
+		try {
+			stmt = con.prepareCall("{call GetSpecificWord (?,?,?)}");
+			stmt.setString(1, word);
+			stmt.setString(3,url ); 
+			stmt.setInt(2, index );
+			rs=stmt.executeQuery();
+			//rs.next();
+			//x=rs.getInt(1);
+			if (rs.next())
+				x = true ;
+			else 
+				x=  false ; 
+		} 
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+			}
+		return x;
+		
+	}
+
 	
 	
 	//--Get all original words for this stemmed word

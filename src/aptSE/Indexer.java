@@ -253,6 +253,7 @@ public class Indexer implements Runnable  {
 		  		
 			Index = HandleText (  Text[3],  Text[0] , 3, Index );  // handle Title 
 			
+			DB.UpdateNumberOfWords(Text[0], Index);
 			DB.MarkURLIndexed(Text[0]);
 			System.out.println("Finished indexing:"+Text[0]);
 			System.out.println("Indexed Pages= " + ++IndexedPages);
