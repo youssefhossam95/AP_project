@@ -190,13 +190,12 @@ public class Indexer implements Runnable  {
 		}
 		
 	}
-	public  void HandleText ( String Text, String URL, int Priority)
+	public  int HandleText ( String Text, String URL, int Priority , int Index )
 	{
 		if (Text == null)
-			return ; 	
+			return Index ; 	
 	    String[]words = Text.split("[ \\[\\]\"?!@{}()/<>;:,._=*&#^$@+-]"); 
 	    Stemmer s = new Stemmer();
-	    int Index =  1 ; 
 		for (int i = 0 ; i < words.length ; i ++)
 			{
 				String str = s.GetStemedString(words[i]); 
@@ -206,7 +205,7 @@ public class Indexer implements Runnable  {
 				InsertContains(words[i], URL , Priority,Index);
 				Index += 1 ; // index of the word in the paragraph 
 			}
-		
+		return Index ; 
 	}
 	
 	synchronized public  boolean GetTextFromRs ( String[] output ){
@@ -247,11 +246,12 @@ public class Indexer implements Runnable  {
 		    DB.DeleteURL(Text[0]); // delete any any records in the ucontains table with this url 
 		    GetUContainsCount(); 
 		    System.out.println(Thread.currentThread().getName() +" is Now Indexing" + Text[0]);
-		    HandleText ( Text[1], Text[0] , 1); // handle body 
+		    int Index  =1 ; 
+		    Index = HandleText ( Text[1], Text[0] , 1 , Index ); // handle body 
 			
-			HandleText (  Text[2],  Text[0] , 2); // handle headers 
+			Index = HandleText (  Text[2],  Text[0] , 2 , Index ); // handle headers 
 		  		
-			HandleText (  Text[3],  Text[0] , 3);  // handle Title 
+			Index = HandleText (  Text[3],  Text[0] , 3, Index );  // handle Title 
 			
 			DB.MarkURLIndexed(Text[0]);
 			System.out.println("Finished indexing:"+Text[0]);
