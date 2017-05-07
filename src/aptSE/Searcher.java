@@ -142,6 +142,7 @@ public void calculateTF() throws SQLException
 			{
 				wordWeight=((1*currentPriority)/(currentDiff+2));
 			}
+
 			
 			tf =wordWeight/URLWords;
 			idf_tf=IDF[i]*tf;
@@ -150,7 +151,7 @@ public void calculateTF() throws SQLException
 		}
 		System.out.println("after words");
 
-			
+
 		}
 	}
 	
