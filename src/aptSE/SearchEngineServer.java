@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import java.sql.*;
 /**
  * Servlet implementation class SearchEngineServer
  */
@@ -28,7 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 public class SearchEngineServer extends HttpServlet {
 	DBmanager db;
 	private static final long serialVersionUID = 1L;
-       
+	DBmanager DB;
     /**
      * @see HttpServlet#HttpServlet()
      */
@@ -37,6 +38,7 @@ public class SearchEngineServer extends HttpServlet {
         super();
         db=new DBmanager();
         // TODO Auto-generated constructor stub
+        DB=new DBmanager();
     }
 
 	/**
@@ -44,33 +46,42 @@ public class SearchEngineServer extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		
 		response.setContentType("text/html");
 		PrintWriter Out=response.getWriter();
 		String SearchWord=request.getParameter("SearchTextBox");
-		String[] Links=null;
-		Searcher TheSearcher= new Searcher(SearchWord,db);
-		try {
-			Links=TheSearcher.execute();
-			} 
-		catch (SQLException e) 
+
+		if(SearchWord!=null)
 		{
+			Out.write(GetEquivalentWords(SearchWord));
+		}
+//		String Header="<head>"+"<form method="+"\""+"GET"+"\""+ "action="+"\""+"SearchEngineServerPath"+"\""+" >"+ "<input  type="+"text"+" size="+"100"+"  value="+"\""+SearchWord+" \" " +" name="+"SearchTextBox"+">"+"<input value="+"\""+"Search "+"\""+ "type="+"\""+"submit"+"\""+" /> </form>";
+//		String DIV="<div style="+"\" "+"float: left;"+"\""+"><img src="+"../SmallDowarley.gif " +" width="+"200 "+ "height="+"100 " +"alt="+"12 "+"></div>";
+//		String URL=URLPrint("www.google.com","www.officialTest.com",SearchWord);
+//		URL+=URLPrint("www.google.com","www.RetrievedSite.com","Dola");
+//		Out.println(Header+DIV+URL+"</html");
+
+		
+	
+	}
+	
+	public String GetEquivalentWords(String Word)
+	{
+		StringBuffer returnData=new StringBuffer();
+		String query = "select * from SearchWords where SearchedPhrases like"+"'"+Word+"%'" ; 
+		ResultSet Rs=DB.executeQuery(query);
+		try {
+			
+			while(Rs.next())
+			{
+				returnData.append(Rs.getString("SearchedPhrases")+",");
+			}
+			
+		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		String Header="<head>"+"<form method="+"\""+"GET"+"\""+ "action="+"\""+"SearchEngineServerPath"+"\""+" >"+ "<input  type="+"text"+" size="+"100"+"  value="+"\""+SearchWord+" \" " +" name="+"SearchTextBox"+">"+"<input value="+"\""+"Search "+"\""+ "type="+"\""+"submit"+"\""+" /> </form>";
-		String DIV="<div style="+"\" "+"float: left;"+"\""+"><img src="+"../SmallDowarley.gif " +" width="+"200 "+ "height="+"100 " +"alt="+"12 "+"></div>";
-		String URL="";//=URLPrint("www.google.com","www.officialTest.com",SearchWord);
-		String Pages="<div style="+"\"" +" width: 100%; overflow: hidden;"+"\" "+"> "+"<font size="+" \" 5 \" > 1 2 3 4 5 6 7 8 9 10"+"</font></div>";
-		for(int i=0;i<Links.length;i++)
-		{
-			if(i!=10)
-			URL+=URLPrint(Links[i],Links[i],SearchWord);
-		}
-		//URL+=URLPrint("www.google.com","www.RetrievedSite.com","Dola");
-		Out.println(Header+DIV+URL+Pages+"</html");
 		
-	
+		return returnData.toString();
 	}
 protected String URLPrint(String URLBlue,String URLGreen,String Caption)
 {

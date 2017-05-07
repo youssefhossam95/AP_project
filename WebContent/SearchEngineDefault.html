@@ -3,12 +3,80 @@
 <head>
 <title>Dowarley Search Engine</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style>
+* {
+  box-sizing: border-box;
+}
+#SearchTextBox
+{
+  border-collapse: collapse;
+  width: 100%;
+  border: 1px solid #ddd;
+  font-size: 18px;
+}
+
+#myTable {
+  border-collapse: collapse;
+  width: 100%;
+  border: 1px solid #ddd;
+  font-size: 18px;
+}
+
+#myTable th, #myTable td {
+  text-align: left;
+  padding: 12px;
+}
+
+#myTable tr {
+  border-bottom: 1px solid #ddd;
+}
+
+#myTable tr.header, #myTable tr:hover {
+  background-color: #f1f1f1;
+}
+
+</style>
 <script>
+function EmptyDivTrigger()
+{
+	document.getElementById("EmptyDiv").visibility='hidden';
+}
+
+
+
 function ClearTextBox() {
 if(SearchTextBox.selected="selected")
 {
 SearchTextBox.value=""
 }
+}
+var xMLHTTPRequest=new XMLHttpRequest();
+function findSearchedWords()
+{
+	var key = event.keyCode || event.charCode;
+	 if( key == 8 || key == 46 )
+	 {
+		 document.getElementById("myTable").innerHTML="";
+		 return;
+	}
+	xMLHTTPRequest.open("Get","SearchEngineServerPath?SearchTextBox="+SearchTextBox.value,true);
+	xMLHTTPRequest.onreadystatechange=GetWords;
+	xMLHTTPRequest.send(null);
+}
+function GetWords()
+{
+	if(xMLHTTPRequest.readyState==4 && xMLHTTPRequest.status==200)
+		{
+		var Obj=xMLHTTPRequest.responseText;
+		document.getElementById("myTable").innerHTML="";
+		Obj=Obj.substring(0,Obj.length-1);
+		var ss = Obj.split(",");
+		for (var i in ss) {  
+			document.getElementById("myTable").innerHTML+=ss[i]+"<br>"; 
+		}  
+		}
+	
+
 }
 </script>
 </head>
@@ -17,9 +85,14 @@ SearchTextBox.value=""
 <img src="../Dawarley.gif" width="533" height="300" alt="">
 <div class="eventNotifier" id=return>
 <form method="GET" action="SearchEngineServerPath" >
-<input  type="text" size="100" onclick="ClearTextBox()"  value="Your Search Journey Starts Here " id="SearchTextBox" name="SearchTextBox">
-<input value="Search" type="submit" />
-<br>
+<input  type="text" size="100" onclick="ClearTextBox();" onkeyup='findSearchedWords();'  value="Your Search Journey Starts Here " id="SearchTextBox" name="SearchTextBox"/>
+
+<table id="myTable">
+</table>
+
+<input id="SearchSubmit" value="Search" onclick="" type="submit" />
+
+<div id="EmptyDiv"></div>
 </form>
 </div>
 </center>
