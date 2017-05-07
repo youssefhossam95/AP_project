@@ -69,7 +69,8 @@ public void calculateIDF() throws SQLException
 	int countOfPages;
 	NumFetchedPages=db.GetNumOfFetchedPages();
 	
-	
+	System.out.println("entered idf");
+
 	   /// to calculate IDF of words
 		for(int i=0;i<SplitWords.length;i++)
 		{
@@ -78,7 +79,7 @@ public void calculateIDF() throws SQLException
 			IDs[i]=idTemp;
 			currentStem=db.GetStemmedWord(IDs[i]);
 			stemIDs=db.GetStemmedIDs(currentStem);
-			while(stemIDs.next())
+			while(stemIDs.next()) //hanzbtha
 			{
 				currentID=stemIDs.getInt(1);
 				
@@ -100,8 +101,10 @@ public void calculateIDF() throws SQLException
 public void calculateTF() throws SQLException
 {
 	String currentURL;
-	int NumOfOccOfThisWord;
+	double wordWeight;
 	int URLWords=0;
+	double tf; 
+	double idf_tf;
 	String stem;
 	ResultSet rs=null;
 	ResultSet rsOfWords;
@@ -110,45 +113,51 @@ public void calculateTF() throws SQLException
 	
 	for(int i=0; i<SplitWords.length; i++) // loop on words
 	{
-		NumOfOccOfThisWord=0;
-		stem=db.GetStemmedWord(IDs[i]);
-		rs=db.GetURLsOfWord(stem);
-		while(rs.next()) //loop on pages
+		Stemmer s= new Stemmer();
+		stem=s.GetStemedString(SplitWords[i]);//use the function
+			
+		rsOfWords=db.GetPrioritiesAndDiff(stem);
+		System.out.println("enered words");
+		int count=0;
+		while(rsOfWords.next()) 
 		{
-			currentURL=rs.getString(1);
+			currentID=rsOfWords.getInt("ID");
+			currentPriority=rsOfWords.getInt("Priorityy");
+			currentDiff=rsOfWords.getInt("Difference");
+			currentURL=rsOfWords.getString("URL");
 			if(!URLs.containsKey(currentURL))
 			{
 				URLWords=db.GetNumOfWords(currentURL);
 				URLs.put(currentURL, URLWords);
 			}
+			else 
+				URLWords = URLs.get(currentURL); 
 			
-			rsOfWords=db.GetPrioritiesAndDiff(currentURL, stem);
-			while(rsOfWords.next()) //loop for counting words in a page
+			if(currentID==IDs[i])
 			{
-				currentID=rsOfWords.getInt("ID");
-				currentPriority=rsOfWords.getInt("Priorityy");
-				currentDiff=rsOfWords.getInt("Difference");
-				if(currentID==IDs[i])
-				{
-					NumOfOccOfThisWord+=1*currentPriority;
-					
-				}
-				else
-				{
-					NumOfOccOfThisWord+=((1*currentPriority)/(currentDiff+2));
-				}
+				wordWeight=1*currentPriority;
+				
+			}
+			else
+			{
+				wordWeight=((1*currentPriority)/(currentDiff+2));
 			}
 			
-			double tf=NumOfOccOfThisWord/db.GetNumOfWords(currentURL);
-			double idf_tf=IDF[i]*tf;
+			tf =wordWeight/URLWords;
+			idf_tf=IDF[i]*tf;
 			addPage(currentURL, idf_tf);//donc hasabna el relevanve
+			System.out.println(count++);
+		}
+		System.out.println("after words");
+
+			
 		}
 	}
 	
 	
 	
 	
-}
+
 
 
 

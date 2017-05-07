@@ -544,15 +544,14 @@ public class DBmanager {
 			return out ; 
 		}
 	
-		public ResultSet GetPrioritiesAndDiff(String URL, String stem)
+		public ResultSet GetPrioritiesAndDiff( String stem)
 		{
 			ResultSet out =null; 
 			try {
 			CallableStatement stmt = null;
-			stmt = con.prepareCall("{call GetPriorityAndDiff(?,?)}");
+			stmt = con.prepareCall("{call GetPriorityAndDiff(?)}");
 			
-			stmt.setString(1, URL);
-			stmt.setString(2, stem);
+			stmt.setString(1, stem);
 			
 			
 			out = stmt.executeQuery(); 
