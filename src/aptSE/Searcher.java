@@ -24,7 +24,7 @@ int[] IDs;
 HashMap<String,Integer> URLs;
 int NumFetchedPages=0;
 HashMap<String,Double> pagesMap;
-
+public double avg = 0 ; 
 
 //double[] Relevance;
 //double [] TF;
@@ -204,13 +204,21 @@ public String[] getLinksInOrder() //returns ranked urls
 {
 	
 	ArrayList<Page> temp= new ArrayList<Page>();
-	
+	int count = 0 ; 
 	for(Map.Entry<String, Double> m : pagesMap.entrySet())
 	{
-		double totalScore=m.getValue()*50 +db.GetPopularity(m.getKey()); //scales the idf-tf and add the popularity.
+		double totalScore=m.getValue()*1000 +db.GetPopularity(m.getKey()); //scales the idf-tf and add the popularity.
 		temp.add(new Page(m.getKey(),totalScore));
+		if (db.GetPopularity(m.getKey()) == 0)
+			System.out.println("problem") ; 
+		avg += m.getValue()/db.GetPopularity(m.getKey()); 
+		count ++ ; 
 	}
-	
+	if (count != 0 )
+	avg /= count; 
+	else 
+	avg = 0 ; 
+	System.out.println("the average of IDF-tf/ popularity = " + String.valueOf(avg));
 	Collections.sort(temp); //sort array list according to rank score.
 	Collections.reverse(temp);
 	String [] links=new String[temp.size()];
