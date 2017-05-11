@@ -68,23 +68,38 @@ public class SamaMain {
 //		System.out.print(oout.get(0).size());
 //		
 
-		String Search="data mining";
+		
+		String query = "SELECT TOP (30) [ID] ,[Text] ,[StemmedText],[Difference]"
+				+ " FROM [SearchEngine].[dbo].[Word] order by ID asc " ; 
+		
+		ResultSet RR = db.executeQuery(query); 
+		int counter = 0  ; 
+		double average = 0 ; 
+
+		while (RR.next())
+		{
+			String Search=RR.getString("Text");
 
 //		
-
-		String[] Links=null;
-		Searcher s= new Searcher(Search,db);
-		Links=s.execute();
+	
+			String[] Links=null;
+			Searcher s= new Searcher(Search,db);
+			Links=s.execute();
+			if(s.avg!= 0)
+			{
+				average += s.avg ; 
+				counter ++ ; 
+			} 
+			//System.out.println("haii");
+			for(int i=0;i<Links.length;i++)
+			{
+				
+			//	System.out.println(Links[i]);
+			}
+			
+		}	  
 		//System.out.println("haii");
-		for(int i=0;i<Links.length;i++)
-		{
-			
-			System.out.println(Links[i]);
-		}
-			
-			  
-		//System.out.println("haii");
-			
+		System.out.println(average / counter);
 		
 		
 		//System.out.print(num);
