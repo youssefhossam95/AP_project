@@ -55,6 +55,11 @@ public class Crawler implements Runnable {
 			int index=currentURL.indexOf('#');//sheel el b3d el shbak 3shn byb2a mogrd targeting.
 			if(index!=-1)
 				currentURL=currentURL.substring(0, index);
+			
+			if(currentURL.endsWith("/")) 
+				currentURL=currentURL.substring(0, currentURL.length()-1);
+			
+			
 			Document doc = null;
 			PreparedStatement ps=null;
 			try {
