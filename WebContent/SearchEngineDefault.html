@@ -3,45 +3,12 @@
 <head>
 <title>Dowarley Search Engine</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<style>
-* {
-  box-sizing: border-box;
-}
-#SearchTextBox
-{
-  border-collapse: collapse;
-  width: 100%;
-  border: 1px solid #ddd;
-  font-size: 18px;
-}
-
-#myTable {
-  border-collapse: collapse;
-  width: 100%;
-  border: 1px solid #ddd;
-  font-size: 18px;
-}
-
-#myTable th, #myTable td {
-  text-align: left;
-  padding: 12px;
-}
-
-#myTable tr {
-  border-bottom: 1px solid #ddd;
-}
-
-#myTable tr.header, #myTable tr:hover {
-  background-color: #f1f1f1;
-}
-
-</style>
 <script>
-function EmptyDivTrigger()
-{
-	document.getElementById("EmptyDiv").visibility='hidden';
-}
 
+function SearchForWord()
+{
+	someFieldId.value="1";
+}
 
 
 function ClearTextBox() {
@@ -53,13 +20,21 @@ SearchTextBox.value=""
 var xMLHTTPRequest=new XMLHttpRequest();
 function findSearchedWords()
 {
+	someFieldId.value="0";
 	var key = event.keyCode || event.charCode;
 	 if( key == 8 || key == 46 )
 	 {
-		 document.getElementById("myTable").innerHTML="";
+		 var count=1;
+		 for (var i=0;i<5;i++)
+			{
+			 document.getElementById("Input"+count).value="";
+			 count++;
+			}
+		 
 		 return;
 	}
-	xMLHTTPRequest.open("Get","SearchEngineServerPath?SearchTextBox="+SearchTextBox.value,true);
+	 
+	xMLHTTPRequest.open("Get","SearchEngineServerPath?SearchTextBox="+SearchTextBox.value+"&someFieldId="+someFieldId.value,true);
 	xMLHTTPRequest.onreadystatechange=GetWords;
 	xMLHTTPRequest.send(null);
 }
@@ -68,11 +43,14 @@ function GetWords()
 	if(xMLHTTPRequest.readyState==4 && xMLHTTPRequest.status==200)
 		{
 		var Obj=xMLHTTPRequest.responseText;
-		document.getElementById("myTable").innerHTML="";
+		
 		Obj=Obj.substring(0,Obj.length-1);
 		var ss = Obj.split(",");
-		for (var i in ss) {  
-			document.getElementById("myTable").innerHTML+=ss[i]+"<br>"; 
+		var count=1;
+		for (var i in ss) 
+		{  
+			document.getElementById("Input"+count).value=ss[i];
+				count++;
 		}  
 		}
 	
@@ -84,15 +62,20 @@ function GetWords()
 <center>
 <img src="../Dawarley.gif" width="533" height="300" alt="">
 <div class="eventNotifier" id=return>
-<form method="GET" action="SearchEngineServerPath" >
-<input  type="text" size="100" onclick="ClearTextBox();" onkeyup='findSearchedWords();'  value="Your Search Journey Starts Here " id="SearchTextBox" name="SearchTextBox"/>
+<form method="GET" action="SearchEngineServerPath" onsubmit="SearchForWord()" >
+<input  type="text" size="100" onclick="ClearTextBox();" list="languageList" onkeyup='findSearchedWords();'  value="Your Search Journey Starts Here " id="SearchTextBox" name="SearchTextBox"/>
+<input id="SearchSubmit" value="Search" onclick="" type="submit"  />
+<input type="hidden" name="someField" value="0" id="someFieldId" />
+<datalist id="languageList">
+<option value=""  id="Input1"/>
+<option value="" id="Input2"/>
+<option value="" id="Input3"/>
+<option value="" id="Input4"/>
+<option value="" id="Input5"/>
 
-<table id="myTable">
-</table>
+</datalist>
 
-<input id="SearchSubmit" value="Search" onclick="" type="submit" />
 
-<div id="EmptyDiv"></div>
 </form>
 </div>
 </center>

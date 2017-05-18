@@ -48,17 +48,48 @@ public class SearchEngineServer extends HttpServlet {
 		// TODO Auto-generated method stub
 		response.setContentType("text/html");
 		PrintWriter Out=response.getWriter();
+		String Diff=request.getParameter("someFieldId");
 		String SearchWord=request.getParameter("SearchTextBox");
-
-		if(SearchWord!=null)
+		if(Diff!=null)
 		{
-			Out.write(GetEquivalentWords(SearchWord));
+			if(Integer.parseInt(Diff)==0)
+			{
+			if(SearchWord!=null)
+				{
+					Out.write(GetEquivalentWords(SearchWord));
+				}
+				return;
+			}
+		
 		}
-//		String Header="<head>"+"<form method="+"\""+"GET"+"\""+ "action="+"\""+"SearchEngineServerPath"+"\""+" >"+ "<input  type="+"text"+" size="+"100"+"  value="+"\""+SearchWord+" \" " +" name="+"SearchTextBox"+">"+"<input value="+"\""+"Search "+"\""+ "type="+"\""+"submit"+"\""+" /> </form>";
-//		String DIV="<div style="+"\" "+"float: left;"+"\""+"><img src="+"../SmallDowarley.gif " +" width="+"200 "+ "height="+"100 " +"alt="+"12 "+"></div>";
-//		String URL=URLPrint("www.google.com","www.officialTest.com",SearchWord);
-//		URL+=URLPrint("www.google.com","www.RetrievedSite.com","Dola");
-//		Out.println(Header+DIV+URL+"</html");
+		else 
+		{
+			String[] Links=null;
+			Searcher s= new Searcher(SearchWord,db);
+			try {
+				Links=s.execute();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			String Header="<head>"+"<form method="+"\""+"GET"+"\""+ "action="+"\""+"SearchEngineServerPath"+"\""+" >"+ "<input  type="+"text"+" size="+"100"+"  value="+"\""+SearchWord+" \" " +" name="+"SearchTextBox"+">"+"<input value="+"\""+"Search "+"\""+ "type="+"\""+"submit"+"\""+" /> </form>";
+			String DIV="<div style="+"\" "+"float: left;"+"\""+"><img src="+"../SmallDowarley.gif " +" width="+"200 "+ "height="+"100 " +"alt="+"12 "+"></div>";
+			String URL="";
+			for(int i=0;i<Links.length;i++)
+			{		
+				if(Links[i]!=null)
+				{
+					URL+=URLPrint(Links[i],Links[i],db.GetPageTitle(Links[i])); //Unclosed quotation mark after the character string ' '.s.GetPageTitle(Links[i])
+				}
+
+			}
+			Out.println(Header+DIV+URL+"</html");
+		}
+			
+		
+
+
 
 		
 	

@@ -69,7 +69,7 @@ public void calculateIDF() throws SQLException
 	int countOfPages;
 	NumFetchedPages=db.GetNumOfFetchedPages();
 	
-	System.out.println("entered idf");
+//	System.out.println("entered idf");
 
 	   /// to calculate IDF of words
 		for(int i=0;i<SplitWords.length;i++)
@@ -119,7 +119,7 @@ public void calculateTF() throws SQLException
 		stem=s.GetStemedString(SplitWords[i]);//use the function
 			
 		rsOfWords=db.GetPrioritiesAndDiff(stem);
-		System.out.println("enered words");
+	//	System.out.println("enered words");
 		int count=0;
 		while(rsOfWords.next()) 
 		{
@@ -150,9 +150,9 @@ public void calculateTF() throws SQLException
 			tf =wordWeight/URLWords;
 			idf_tf=IDF[i]*tf;
 			addPage(currentURL, idf_tf);//donc hasabna el relevanve
-			System.out.println(count++);
+		//	System.out.println(count++);
 		}
-		System.out.println("after words");
+	//	System.out.println("after words");
 
 
 		}
