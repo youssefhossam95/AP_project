@@ -80,7 +80,7 @@ public class SearchEngineServer extends HttpServlet {
 			{		
 				if(Links[i]!=null)
 				{
-					URL+=URLPrint(Links[i],Links[i],db.GetPageTitle(Links[i])); //Unclosed quotation mark after the character string ' '.s.GetPageTitle(Links[i])
+				//	URL+=URLPrint(Links[i],Links[i],db.GetPageTitle(Links[i])); //Unclosed quotation mark after the character string ' '.s.GetPageTitle(Links[i])
 				}
 
 			}
