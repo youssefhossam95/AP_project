@@ -414,13 +414,27 @@ public class DBmanager {
 	
 	// number of pages for this word
 	
-	public int NumPagesOfThisWord(int id) throws SQLException
+	public int NumPagesOfThisWord(String StemmedText) throws SQLException
 	{
-		ResultSet rs=this.GetURL(id);
-		int count=0;
-		while(rs.next())
-		{
-			count++;
+		
+		
+		ResultSet rs =null; 
+		int count = 0 ; 
+		try {
+		CallableStatement stmt = null;
+		stmt = con.prepareCall("{call numOfPagesOfWord (?)}");
+		
+		stmt.setString(1, StemmedText);
+		
+		rs = stmt.executeQuery(); 
+		rs.next(); 
+		count = rs.getInt("count"); 
+		} 
+		catch (SQLException e )
+		{ 
+			
+			e.printStackTrace(); 
+			
 		}
 		return count;
 	}

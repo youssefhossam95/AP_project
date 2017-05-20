@@ -198,11 +198,13 @@ public class Indexer implements Runnable  {
 	    Stemmer s = new Stemmer();
 		for (int i = 0 ; i < words.length ; i ++)
 			{
+				if (words[i].length() == 0)
+					continue ; 
 				String str = s.GetStemedString(words[i]); 
 				if(str == null)
 					continue ; 
-				InsertWords(  words[i] , str);
-				InsertContains(words[i], URL , Priority,Index);
+				InsertWords(  words[i].toLowerCase() , str);
+				InsertContains(words[i].toLowerCase(), URL , Priority,Index);
 				Index += 1 ; // index of the word in the paragraph 
 			}
 		return Index ; 

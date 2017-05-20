@@ -16,6 +16,47 @@ public class SamaMain {
 	public static void main(String[] args) throws SQLException {
 		// TODO Auto-generated method stub
 		DBmanager db=new DBmanager();
+		
+		String Word = "\"machine learning\"" ;
+		System.out.println(Word);
+		
+//		Word = Word.substring(1, Word.length()-1 ); 
+		
+//		System.out.println(Word);
+		Searcher s  = new Searcher (Word , db); 
+		
+		String [] ur = s.execute() ; 
+		for (int i = 0 ; i < ur.length ; i++)
+		{
+			
+			System.out.println(ur[i])  ; 
+			
+			
+		}
+		
+//		String query ="SELECT TOP (10) [ID],[Text],[StemmedText] ,[Difference]"
+//				+ "  FROM [SearchEngine].[dbo].[Word] order by ID" ;
+//		
+//		ResultSet rs = db.executeQuery(query); 
+//		
+//		double average = 0 ; 
+//		double count  = 0 ; 
+//		
+//		while (rs.next())
+//		{
+//			String Word = rs.getString("Text"); 
+//			Searcher s  = new Searcher (Word , db); 
+//			s.execute() ; 
+//			average += s.avg ;  
+//			count ++  ;
+//		}
+//		
+//		average /= count ;
+//		System.out.println(average);
+		
+		
+		
+		
 		//ResultSet rs=db.GetWordID("and");
 		//int id=db.GetID1("and");
 		//rs.next();
@@ -67,25 +108,12 @@ public class SamaMain {
 //		System.out.print(oout.size());
 //		System.out.print(oout.get(0).size());
 //		
-
-		String Search="data mining";
-
-//		
-
-		String[] Links=null;
-		Searcher s= new Searcher(Search,db);
-		Links=s.execute();
-		//System.out.println("haii");
-		for(int i=0;i<Links.length;i++)
-		{
-			
-			System.out.println(Links[i]);
-		}
-			
-			  
-		//System.out.println("haii");
-			
 		
+//		String x = "williams \"\"lolo\" [what]  "; 
+//		String [] w = x.split("[\\[\\]\"]");
+//		for ( int i = 0 ; i <w.length ; i ++)
+//			System.out.println(w[i]);
+//		System.out.println(x);
 		
 		//System.out.print(num);
 	}

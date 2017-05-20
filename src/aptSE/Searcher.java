@@ -1,7 +1,10 @@
 package aptSE;
 import java.util.*;
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.*;
@@ -24,7 +27,7 @@ int[] IDs;
 HashMap<String,Integer> URLs;
 int NumFetchedPages=0;
 HashMap<String,Double> pagesMap;
-
+public double avg = 0 ; 
 
 //double[] Relevance;
 //double [] TF;
@@ -35,7 +38,7 @@ HashMap<String,Double> pagesMap;
 //String [] OrderedLinks;
 //boolean PhraseSearch;
 
-Searcher(String Q, DBmanager db)
+Searcher(String Q , DBmanager db)
 {
 	ReqSearch=Q;
 	this.db=db;
@@ -69,30 +72,34 @@ public void calculateIDF() throws SQLException
 	int countOfPages;
 	NumFetchedPages=db.GetNumOfFetchedPages();
 	
-//	System.out.println("entered idf");
+	System.out.println("entered idf");
 
 	   /// to calculate IDF of words
 		for(int i=0;i<SplitWords.length;i++)
 		{
-			countOfPages=0;
 			idTemp=db.GetID1(SplitWords[i]);
 			IDs[i]=idTemp;
 			Stemmer s = new Stemmer () ;  
 			//currentStem=db.GetStemmedWord(IDs[i]);
 			currentStem = s.GetStemedString(SplitWords[i]); 
-			stemIDs=db.GetStemmedIDs(currentStem);
-			while(stemIDs.next()) //hanzbtha
-			{
-				currentID=stemIDs.getInt(1);
+			//stemIDs=db.GetStemmedIDs(currentStem);
+			//while(stemIDs.next()) //hanzbtha
+			//{
+			//	currentID=stemIDs.getInt(1);
 				
-			    pagesOfStem=db.NumPagesOfThisWord(currentID);
-			    countOfPages+=pagesOfStem;  
+			    pagesOfStem=db.NumPagesOfThisWord(currentStem);
+			 //   countOfPages+=pagesOfStem;  
 				
-			}
-			
-			double a= NumFetchedPages/( countOfPages + 1 ); // is that 1 ok ?? 
-			IDF[i]=Math.log10(a);	
-			
+			double a ; 
+			    if (pagesOfStem != 0 ) 
+			    		 {
+			    			a= Double.valueOf(NumFetchedPages)/Double.valueOf( pagesOfStem ); // is that 1 ok ?? 
+			    			IDF[i]=Math.log10(a);	
+
+			    		 }
+			    else 
+			    	
+			    	IDF[i] = 0 ; 
 			
 		}
 	
@@ -119,7 +126,7 @@ public void calculateTF() throws SQLException
 		stem=s.GetStemedString(SplitWords[i]);//use the function
 			
 		rsOfWords=db.GetPrioritiesAndDiff(stem);
-	//	System.out.println("enered words");
+		System.out.println("enered words");
 		int count=0;
 		while(rsOfWords.next()) 
 		{
@@ -143,16 +150,24 @@ public void calculateTF() throws SQLException
 			}
 			else
 			{
-				wordWeight=((1*currentPriority)/(currentDiff+2));
+				wordWeight=(Double.valueOf(1*currentPriority)/Double.valueOf(currentDiff+2));
 			}
 
 			
-			tf =wordWeight/URLWords;
+			tf =wordWeight/Double.valueOf(URLWords);
 			idf_tf=IDF[i]*tf;
+			
+			if (idf_tf < 0 )
+			{
+				System.out.println("problem with idf_tf" );
+				WriteToFile("output.txt", String.valueOf(db.GetID1(SplitWords[0]))) ; 
+			}
+			if (tf < 0 )
+				System.out.println("problem with tf" );
 			addPage(currentURL, idf_tf);//donc hasabna el relevanve
-		//	System.out.println(count++);
+			System.out.println(count++);
 		}
-	//	System.out.println("after words");
+		System.out.println("after words");
 
 
 		}
@@ -161,7 +176,22 @@ public void calculateTF() throws SQLException
 	
 	
 	
-
+public static void WriteToFile (String fileName , String text ){
+	
+	try {
+		
+	//	FileWriter fw = new FileWriter (fileName); 
+		PrintWriter out = new PrintWriter(new FileOutputStream (new File (fileName), true));
+		out.append(text); 
+		out.println("");
+		out.close();
+		
+	} catch (  IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	
+}
 
 
 
@@ -173,10 +203,17 @@ public String [] execute() throws SQLException
 	String[] OrderedLinks = null;
 	if(ReqSearch.startsWith("\"") && ReqSearch.endsWith("\"")) //Phrase search
 	{
+		if (SplitWords.length != 0 ) 
+		{
+			
+			SplitWords[0] = SplitWords[0].substring(1, SplitWords[0].length())  ; // remove " from first word 
+			SplitWords[SplitWords.length-1] = SplitWords[SplitWords.length-1].substring(0, SplitWords[SplitWords.length-1].length()-1); 
+			PhraseSearch(); 
+			OrderedLinks = getLinksInOrder() ; 
 		//PhraseSearch=true;
 		//call db.GetPriority to get priority
 		//call db.GetPopularity to get popularity
-	
+		}
 	}
 	else
 	{
@@ -204,13 +241,21 @@ public String[] getLinksInOrder() //returns ranked urls
 {
 	
 	ArrayList<Page> temp= new ArrayList<Page>();
-	
+	int count = 0 ; 
 	for(Map.Entry<String, Double> m : pagesMap.entrySet())
 	{
-		double totalScore=m.getValue()*50 +db.GetPopularity(m.getKey()); //scales the idf-tf and add the popularity.
+		double totalScore=m.getValue()*10000 +db.GetPopularity(m.getKey()); //scales the idf-tf and add the popularity.
 		temp.add(new Page(m.getKey(),totalScore));
+		double x = 10000 ; 
+		avg+= m.getValue() * x  / Double.valueOf(db.GetPopularity(m.getKey())) ; 
+		count ++ ; 
 	}
+	if (count != 0 )
+		avg /= Double.valueOf(count); 
+	else 
+		avg = 0 ; 
 	
+	//System.out.println("the average of IDF-tf/ popularity = " + String.valueOf(avg));
 	Collections.sort(temp); //sort array list according to rank score.
 	Collections.reverse(temp);
 	String [] links=new String[temp.size()];
@@ -225,7 +270,7 @@ public String[] getLinksInOrder() //returns ranked urls
 }
 
 
-public String []  PraseSearch (){ 
+public void PhraseSearch (){ 
 	List <String> URLSList  = new ArrayList<String>() ; 
 	
 	ResultSet rs ; 
@@ -248,7 +293,13 @@ public String []  PraseSearch (){
 			}
 			
 			if ( OK )
-				URLSList.add(url); 	
+			{
+				double pop = db.GetPopularity(url); 
+				//  URLSList.add(url);
+				pop = 0 ; 
+		
+				addPage(url, pop);
+			}
 		}
 	} catch (SQLException e) {
 		// TODO Auto-generated catch block
@@ -258,12 +309,12 @@ public String []  PraseSearch (){
 	
 	
 				
-	String [] URLS = new String [URLSList.size()] ; 
-	for ( int i = 0 ; i < URLSList.size() ; i ++ )
-		URLS[i] = URLSList.get(i); 
-	
-
-	return URLS;
+//	String [] URLS = new String [URLSList.size()] ; 
+//	for ( int i = 0 ; i < URLSList.size() ; i ++ )
+//		URLS[i] = URLSList.get(i); 
+//	
+//
+//	return URLS;
 }
 
 
