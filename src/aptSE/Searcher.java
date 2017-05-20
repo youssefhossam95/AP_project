@@ -165,9 +165,9 @@ public void calculateTF() throws SQLException
 			if (tf < 0 )
 				System.out.println("problem with tf" );
 			addPage(currentURL, idf_tf);//donc hasabna el relevanve
-			System.out.println(count++);
+			//System.out.println(count++);
 		}
-		System.out.println("after words");
+		
 
 
 		}

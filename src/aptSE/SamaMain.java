@@ -17,7 +17,7 @@ public class SamaMain {
 		// TODO Auto-generated method stub
 		DBmanager db=new DBmanager();
 		
-		String Word = "\"machine learning\"" ;
+		String Word = "machine learning" ;
 		System.out.println(Word);
 		
 //		Word = Word.substring(1, Word.length()-1 ); 

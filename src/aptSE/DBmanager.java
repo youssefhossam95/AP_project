@@ -347,6 +347,21 @@ public class DBmanager {
 		
 		
 	}
+	public String GetPageTitle(String Link)
+	{
+		CallableStatement stmt = null;
+		try {
+			stmt = con.prepareCall("{call GetPageTitle(?)}");
+			stmt.setString(1, Link);
+			ResultSet rs=stmt.executeQuery();
+			rs.next();
+			return rs.getString(1);
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return "";
+		}
+	}
 	
 	// NUMBER OF FETCHED PAGES
 	public int GetNumOfFetchedPages() 
@@ -429,6 +444,7 @@ public class DBmanager {
 		rs = stmt.executeQuery(); 
 		rs.next(); 
 		count = rs.getInt("count"); 
+		System.out.println("Count = "+count);
 		} 
 		catch (SQLException e )
 		{ 

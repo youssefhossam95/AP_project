@@ -1,5 +1,8 @@
 package aptSE;
 import aptSE.DBmanager;
+
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
@@ -71,20 +74,31 @@ public class SearchEngineServer extends HttpServlet {
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}
-
-			String Header="<head>"+"<form method="+"\""+"GET"+"\""+ "action="+"\""+"SearchEngineServerPath"+"\""+" >"+ "<input  type="+"text"+" size="+"100"+"  value="+"\""+SearchWord+" \" " +" name="+"SearchTextBox"+">"+"<input value="+"\""+"Search "+"\""+ "type="+"\""+"submit"+"\""+" /> </form>";
+			}	
+			String CSSData=  "<link rel="+"\"stylesheet\""+ "href="+"\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css \">";
+			CSSData+="<script src="+" \"https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js\"></script>";
+			CSSData+="<script src="+" \"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js\"></script>";			
+			String Header="<head>"+CSSData+"<form method="+"\""+"GET"+"\""+ "action="+"\""+"SearchEngineServerPath"+"\""+" >"+ "<input  type="+"text"+" size="+"100"+"  value="+"\""+SearchWord+" \" " +" name="+"SearchTextBox"+">"+"<input value="+"\""+"Search "+"\""+ "type="+"\""+"submit"+"\""+" /> </form>";
 			String DIV="<div style="+"\" "+"float: left;"+"\""+"><img src="+"../SmallDowarley.gif " +" width="+"200 "+ "height="+"100 " +"alt="+"12 "+"></div>";
 			String URL="";
 			for(int i=0;i<Links.length;i++)
 			{		
 				if(Links[i]!=null)
 				{
-				//	URL+=URLPrint(Links[i],Links[i],db.GetPageTitle(Links[i])); //Unclosed quotation mark after the character string ' '.s.GetPageTitle(Links[i])
+					URL+=URLPrint(Links[i],Links[i],db.GetPageTitle(Links[i])); //Unclosed quotation mark after the character string ' '.s.GetPageTitle(Links[i])
+					
 				}
 
 			}
-			Out.println(Header+DIV+URL+"</html");
+			WriteToFile("C:\\Users\\Dell\\Documents\\GitHub\\AP_project\\LastQuery.txt",Links);
+			String PagesAvailable="<div class="+"\"container\">" 
+					+     "<ul class="+"\"pagination\">" 
+					+    "<li class="+"\"active\">"+"<a href="+"\"#\">1</a></li>"
+					+    "<li><a href="+"\"#\">2</a></li>"
+					+    "<li><a href="+"\"#\">3</a></li>"
+					+    "<li><a href="+"\"#\">4</a></li>"
+					+    "<li><a href="+"\"#\">5</a></li></ul></div>";
+			Out.println(Header+DIV+URL+PagesAvailable+"</html");
 		}
 			
 		
@@ -122,4 +136,34 @@ protected String URLPrint(String URLBlue,String URLGreen,String Caption)
 	ToPrint+="  <p><font face="+"\""+"verdana "+"\""+ "color="+"\""+"green"+"\""+" >"+URLGreen+"</font></p> </div>";
 	return ToPrint;
 }
+
+public static void WriteToFile (String fileName , String[] text ){
+	
+	try {
+		
+	//	FileWriter fw = new FileWriter (fileName); 
+		File file=new File(fileName);
+		file.delete();
+		PrintWriter out = new PrintWriter(new FileOutputStream (new File (fileName), true));
+		out.write(text[0]);
+		out.println("");
+		for ( int i = 1 ; i < text.length ;  i ++)
+		{
+			out.append(text[i]) ; 
+			out.println(); 	
+		}
+		out.close();
+		
+	} catch (  IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	
 }
+
+
+
+}
+
+
+
