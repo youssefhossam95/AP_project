@@ -17,13 +17,15 @@ public class SamaMain {
 		// TODO Auto-generated method stub
 		DBmanager db=new DBmanager();
 		
-		String Word = "machine learning" ;
+		String Word = "\"Business management explores how businesses\"" ;
 		System.out.println(Word);
+		
+		
 		
 //		Word = Word.substring(1, Word.length()-1 ); 
 		
 //		System.out.println(Word);
-		Searcher s  = new Searcher (Word , db); 
+	   Searcher s  = new Searcher (Word , db); 
 		
 		String [] ur = s.execute() ; 
 		for (int i = 0 ; i < ur.length ; i++)

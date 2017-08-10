@@ -109,6 +109,7 @@ public void calculateIDF() throws SQLException
 
 public void calculateTF() throws SQLException
 {
+	System.out.println("In CacluateTF");
 	String currentURL;
 	double wordWeight;
 	int URLWords=0;
@@ -135,6 +136,14 @@ public void calculateTF() throws SQLException
 			currentDiff=rsOfWords.getInt("Difference");
 			currentURL=rsOfWords.getString("URL");
 			URLWords = rsOfWords.getInt("NumberOfWords"); 
+			int indexed = rsOfWords.getInt("isIndexed"); 
+			if( indexed == 0   || URLWords==0)
+				continue ; 
+			
+			if ( currentPriority  == 2 )
+				currentPriority = 20 ; 
+			else if ( currentPriority == 3 )
+				currentPriority = URLWords/2  ; 
 //			if(!URLs.containsKey(currentURL))
 //			{
 //				URLWords=db.GetNumOfWords(currentURL);

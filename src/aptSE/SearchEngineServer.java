@@ -74,7 +74,8 @@ public class SearchEngineServer extends HttpServlet {
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}	
+			}
+			SaveSearchedWord(SearchWord);
 			String CSSData=  "<link rel="+"\"stylesheet\""+ "href="+"\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css \">";
 			CSSData+="<script src="+" \"https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js\"></script>";
 			CSSData+="<script src="+" \"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js\"></script>";			
@@ -90,7 +91,7 @@ public class SearchEngineServer extends HttpServlet {
 				}
 
 			}
-			WriteToFile("C:\\Users\\Dell\\Documents\\GitHub\\AP_project\\LastQuery.txt",Links);
+			//WriteToFile("C:\\Users\\Dell\\Documents\\GitHub\\AP_project\\LastQuery.txt",Links);
 			String PagesAvailable="<div class="+"\"container\">" 
 					+     "<ul class="+"\"pagination\">" 
 					+    "<li class="+"\"active\">"+"<a href="+"\"#\">1</a></li>"
@@ -108,7 +109,13 @@ public class SearchEngineServer extends HttpServlet {
 		
 	
 	}
-	
+	public void SaveSearchedWord(String SearchWord)
+	{
+		String Query="If Not Exists( Select SearchedPhrases from SearchWords where SearchedPhrases=\'"+SearchWord+"\') Begin Insert SearchWords([SearchedPhrases]) Values(\'"+SearchWord+"\') End;";
+		System.out.println("3ash");
+		DB.executeUpdate(Query);
+		return;
+	}
 	public String GetEquivalentWords(String Word)
 	{
 		StringBuffer returnData=new StringBuffer();
